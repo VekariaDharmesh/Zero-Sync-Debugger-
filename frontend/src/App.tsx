@@ -20,28 +20,46 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 function ServiceMeshMap({ activeStage }: { activeStage: string | undefined }) {
   const nodes = [
-    { id: 'ingest', label: 'Ingest Webhook', x: 75, y: 100, activeStages: ['received', 'context_extraction'] },
-    { id: 'memory', label: 'Parcle Memory', x: 200, y: 155, activeStages: ['querying_memory', 'similarity_scoring', 'MEMORY_SEARCH_STARTED', 'MEMORY_SEARCH_COMPLETED', 'MEMORY_SAVE_STARTED', 'MEMORY_SAVE_COMPLETED'] },
-    { id: 'reasoner', label: 'Claude 3.5 AI', x: 200, y: 45, activeStages: ['reasoning', 'patch_generated', 'patch_validation'] },
-    { id: 'deployer', label: 'Enter Pro Deploy', x: 325, y: 100, activeStages: ['deploying', 'complete'] }
+    { id: 'ingest', label: 'Ingest Webhook', x: 75, y: 100, activeStages: ['received', 'context_extraction'], color: 'from-blue-400 to-indigo-500', icon: 'M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6' },
+    { id: 'memory', label: 'Parcle Memory', x: 200, y: 155, activeStages: ['querying_memory', 'similarity_scoring', 'MEMORY_SEARCH_STARTED', 'MEMORY_SEARCH_COMPLETED', 'MEMORY_SAVE_STARTED', 'MEMORY_SAVE_COMPLETED'], color: 'from-violet-400 to-fuchsia-500', icon: 'M12 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6' },
+    { id: 'reasoner', label: 'Claude 3.5 AI', x: 200, y: 45, activeStages: ['reasoning', 'patch_generated', 'patch_validation'], color: 'from-pink-400 to-rose-500', icon: 'M12 2L2 7l10 5 10-5z M2 17l10 5 10-5 M2 12l10 5 10-5' },
+    { id: 'deployer', label: 'Enter Pro Deploy', x: 325, y: 100, activeStages: ['deploying', 'complete'], color: 'from-emerald-400 to-teal-500', icon: 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M12 6l-6 6h12z' }
   ];
 
   return (
-    <div className="glass-panel p-5 rounded-3xl border border-white/5 flex flex-col justify-between h-[230px] relative overflow-hidden">
-      <div className="flex items-center justify-between mb-2">
+    <div className="glass-panel p-5 rounded-3xl border border-white/5 flex flex-col justify-between h-[230px] relative overflow-hidden group">
+      {/* Abstract background grid layer */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none opacity-50 z-0"></div>
+
+      <div className="flex items-center justify-between mb-2 z-10 relative">
         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">LIVE TOPOLOGICAL SERVICE MESH</span>
-        <span className="flex items-center gap-1.5 text-[9px] font-mono px-2 py-0.5 rounded bg-primary-soft text-primary border border-primary/20">
-          MESH STATUS: ACTIVE
+        <span className="flex items-center gap-1.5 text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+          <span className="h-1 w-1 rounded-full bg-emerald-400 animate-ping"></span>
+          REALTIME VECTOR LINK
         </span>
       </div>
 
-      <div className="flex-1 w-full flex items-center justify-center relative">
+      <div className="flex-1 w-full flex items-center justify-center relative z-10">
         <svg viewBox="0 0 400 200" className="w-full h-full max-h-[160px] overflow-visible">
-          <path d="M 75 100 Q 137.5 72.5 200 45" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1.5" />
-          <path d="M 75 100 Q 137.5 127.5 200 155" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1.5" />
-          <path d="M 200 155 L 200 45" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1.5" />
-          <path d="M 200 45 Q 262.5 72.5 325 100" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1.5" />
+          <defs>
+            <filter id="glow-filter" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+            
+            <linearGradient id="grad-ingest-reasoner" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#6366f1" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="#a855f7" stopOpacity="0.4" />
+            </linearGradient>
+          </defs>
 
+          {/* Connection Paths */}
+          <path id="path-ingest-reasoner" d="M 75 100 Q 137.5 72.5 200 45" fill="none" stroke="url(#grad-ingest-reasoner)" strokeWidth="1.5" />
+          <path id="path-ingest-memory" d="M 75 100 Q 137.5 127.5 200 155" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1.5" />
+          <path id="path-memory-reasoner" d="M 200 155 L 200 45" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1.5" />
+          <path id="path-reasoner-deployer" d="M 200 45 Q 262.5 72.5 325 100" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1.5" />
+
+          {/* Active Flow overlays */}
           {activeStage && (
             <>
               <path d="M 75 100 Q 137.5 72.5 200 45" fill="none" stroke="var(--primary)" strokeWidth="1.5" className="flow-line opacity-40" />
@@ -51,25 +69,56 @@ function ServiceMeshMap({ activeStage }: { activeStage: string | undefined }) {
             </>
           )}
 
+          {/* Flowing animated packet particles */}
+          <circle r="3.5" fill="#fff" filter="url(#glow-filter)" opacity="0.8">
+            <animateMotion dur="2.4s" repeatCount="indefinite">
+              <mpath href="#path-ingest-reasoner" />
+            </animateMotion>
+          </circle>
+          <circle r="3.5" fill="#a855f7" filter="url(#glow-filter)" opacity="0.8">
+            <animateMotion dur="3.2s" repeatCount="indefinite">
+              <mpath href="#path-ingest-memory" />
+            </animateMotion>
+          </circle>
+          <circle r="3.5" fill="#6366f1" filter="url(#glow-filter)" opacity="0.8">
+            <animateMotion dur="1.8s" repeatCount="indefinite">
+              <mpath href="#path-memory-reasoner" />
+            </animateMotion>
+          </circle>
+          <circle r="3.5" fill="#10b981" filter="url(#glow-filter)" opacity="0.8">
+            <animateMotion dur="2.6s" repeatCount="indefinite">
+              <mpath href="#path-reasoner-deployer" />
+            </animateMotion>
+          </circle>
+
+          {/* Node items */}
           {nodes.map(n => {
             const isActive = activeStage && n.activeStages.includes(activeStage);
             return (
               <g key={n.id} className="transition-all duration-300">
                 {isActive && (
-                  <circle cx={n.x} cy={n.y} r="18" fill="var(--primary)" className="animate-ping opacity-25" />
+                  <circle cx={n.x} cy={n.y} r="22" fill="var(--primary)" className="animate-ping opacity-20" />
                 )}
                 <circle
                   cx={n.x}
                   cy={n.y}
-                  r="10"
-                  fill={isActive ? "var(--primary)" : "#0c0f24"}
-                  stroke={isActive ? "#fff" : "rgba(255,255,255,0.1)"}
-                  strokeWidth="2"
-                  className="cursor-pointer hover:scale-110 transition-transform duration-200"
+                  r="15"
+                  className={`transition-colors duration-300 ${isActive ? 'fill-primary stroke-white shadow-glow' : 'fill-[#0c0f24] stroke-white/10'}`}
+                  strokeWidth="1.5"
+                  filter={isActive ? "url(#glow-filter)" : ""}
+                />
+                <path
+                  d={n.icon}
+                  fill="none"
+                  stroke={isActive ? "#fff" : "#64748b"}
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  transform={`translate(${n.x - 6}, ${n.y - 6}) scale(0.5)`}
                 />
                 <text
                   x={n.x}
-                  y={n.y + 22}
+                  y={n.y + 26}
                   textAnchor="middle"
                   fill={isActive ? "#fff" : "#94a3b8"}
                   fontSize="8"
