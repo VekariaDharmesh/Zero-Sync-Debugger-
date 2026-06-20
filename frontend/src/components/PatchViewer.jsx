@@ -64,67 +64,65 @@ export function PatchViewer({ patchDiff, affectedFile }) {
   }
 
   return (
-    <div className="flex flex-col gap-3 w-full bg-[#0a0a0c] rounded-2xl border border-white/5 overflow-hidden">
-      {/* Header separated cleanly with flex flex-row/col */}
-      <div className="flex items-center justify-between px-5 py-3 border-b border-white/5 bg-white/5">
+    <div className="flex flex-col w-full bg-[#0a0a0c] rounded-2xl border border-white/5 overflow-hidden">
+      {/* Header separated cleanly */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-white/5">
         <span className="text-xs font-bold text-slate-300 font-mono">File: {affectedFile || "unknown"}</span>
-        <span className="text-[10px] bg-primary-soft text-primary px-2 py-0.5 rounded border border-primary/20 font-bold uppercase tracking-wider">
-          Surgical unified Diff
+        <span className="text-[10px] bg-primary-soft text-primary px-2.5 py-1 rounded-lg border border-primary/20 font-bold uppercase tracking-wider">
+          Surgical Unified Diff
         </span>
       </div>
 
-      {/* Code diff block with a custom structured table */}
-      <div className="overflow-x-auto w-full">
-        <table className="w-full border-collapse font-mono text-xs text-left">
-          <tbody>
-            {parsedLines.map((line, idx) => {
-              if (line.type === "hunk") {
-                return (
-                  <tr key={idx} className="bg-primary/5 border-y border-white/5 text-primary/70 select-none">
-                    <td className="py-2.5 px-4 font-bold text-center" colSpan={4}>
-                      {line.content}
-                    </td>
-                  </tr>
-                );
-              }
-
-              let rowClass = "hover:bg-white/5";
-              let signClass = "text-slate-600";
-              let codeClass = "text-slate-300";
-
-              if (line.type === "added") {
-                rowClass = "bg-emerald-500/10 hover:bg-emerald-500/15";
-                signClass = "text-emerald-400 font-bold";
-                codeClass = "text-emerald-300";
-              } else if (line.type === "removed") {
-                rowClass = "bg-rose-500/10 hover:bg-rose-500/15";
-                signClass = "text-rose-400 font-bold";
-                codeClass = "text-rose-300";
-              }
-
+      {/* Code diff block with responsive CSS Grid */}
+      <div className="overflow-x-auto w-full bg-bg-dark/20">
+        <div className="min-w-[600px] flex flex-col font-mono text-xs select-text">
+          {parsedLines.map((line, idx) => {
+            if (line.type === "hunk") {
               return (
-                <tr key={idx} className={`${rowClass} transition-colors border-none`}>
-                  {/* Column 1: Old Line Number */}
-                  <td className="w-12 py-1 px-3 text-right text-slate-500 select-none border-r border-white/5 font-mono">
-                    {line.oldLine}
-                  </td>
-                  {/* Column 2: New Line Number */}
-                  <td className="w-12 py-1 px-3 text-right text-slate-500 select-none border-r border-white/5 font-mono">
-                    {line.newLine}
-                  </td>
-                  {/* Column 3: Diff Operator */}
-                  <td className={`w-8 py-1 px-2 text-center select-none font-bold ${signClass}`}>
-                    {line.sign}
-                  </td>
-                  {/* Column 4: Code Text */}
-                  <td className={`py-1 px-4 whitespace-pre break-all ${codeClass}`}>
+                <div key={idx} className="grid grid-cols-[3.5rem_3.5rem_2rem_1fr] bg-primary-soft/10 border-y border-white/5 text-primary/70 select-none py-2 px-4 font-bold text-center">
+                  <div className="col-span-4 font-mono tracking-wide text-[10px]">
                     {line.content}
-                  </td>
-                </tr>
+                  </div>
+                </div>
               );
-            })}
-          </tbody>
-        </table>
+            }
+
+            let rowClass = "hover:bg-white/5";
+            let signClass = "text-slate-600";
+            let codeClass = "text-slate-300";
+
+            if (line.type === "added") {
+              rowClass = "bg-emerald-500/10 hover:bg-emerald-500/15";
+              signClass = "text-emerald-400 font-bold";
+              codeClass = "text-emerald-300";
+            } else if (line.type === "removed") {
+              rowClass = "bg-rose-500/10 hover:bg-rose-500/15";
+              signClass = "text-rose-400 font-bold";
+              codeClass = "text-rose-300";
+            }
+
+            return (
+              <div key={idx} className={`grid grid-cols-[3.5rem_3.5rem_2rem_1fr] ${rowClass} transition-colors items-center py-1 border-b border-white/[0.02]`}>
+                {/* Column 1: Old Line Number */}
+                <div className="pr-3 text-right text-slate-500 select-none border-r border-white/5">
+                  {line.oldLine || " "}
+                </div>
+                {/* Column 2: New Line Number */}
+                <div className="pr-3 text-right text-slate-500 select-none border-r border-white/5">
+                  {line.newLine || " "}
+                </div>
+                {/* Column 3: Diff Operator */}
+                <div className={`text-center select-none font-bold ${signClass}`}>
+                  {line.sign || " "}
+                </div>
+                {/* Column 4: Code Text */}
+                <div className={`px-4 whitespace-pre overflow-x-auto ${codeClass}`}>
+                  {line.content}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
