@@ -18,6 +18,111 @@ import {
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
+function ServiceMeshMap({ activeStage }: { activeStage: string | undefined }) {
+  const nodes = [
+    { id: 'ingest', label: 'Ingest Webhook', x: 50, y: 100, activeStages: ['received', 'context_extraction'] },
+    { id: 'memory', label: 'Parcle Memory', x: 200, y: 155, activeStages: ['querying_memory', 'similarity_scoring', 'MEMORY_SEARCH_STARTED', 'MEMORY_SEARCH_COMPLETED', 'MEMORY_SAVE_STARTED', 'MEMORY_SAVE_COMPLETED'] },
+    { id: 'reasoner', label: 'Claude 3.5 AI', x: 200, y: 45, activeStages: ['reasoning', 'patch_generated', 'patch_validation'] },
+    { id: 'deployer', label: 'Enter Pro Deploy', x: 350, y: 100, activeStages: ['deploying', 'complete'] }
+  ];
+
+  return (
+    <div className="glass-panel p-5 rounded-3xl border border-white/5 flex flex-col justify-between h-[230px] relative overflow-hidden">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">LIVE TOPOLOGICAL SERVICE MESH</span>
+        <span className="flex items-center gap-1.5 text-[9px] font-mono px-2 py-0.5 rounded bg-primary-soft text-primary border border-primary/20">
+          MESH STATUS: ACTIVE
+        </span>
+      </div>
+
+      <div className="flex-1 w-full flex items-center justify-center relative">
+        <svg viewBox="0 0 400 200" className="w-full h-full max-h-[160px] overflow-visible">
+          <path d="M 50 100 Q 125 70 200 45" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1.5" />
+          <path d="M 50 100 Q 125 130 200 155" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1.5" />
+          <path d="M 200 155 L 200 45" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1.5" />
+          <path d="M 200 45 Q 275 70 350 100" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1.5" />
+
+          {activeStage && (
+            <>
+              <path d="M 50 100 Q 125 70 200 45" fill="none" stroke="var(--primary)" strokeWidth="1.5" className="flow-line opacity-40" />
+              <path d="M 50 100 Q 125 130 200 155" fill="none" stroke="var(--primary)" strokeWidth="1.5" className="flow-line opacity-40" />
+              <path d="M 200 155 L 200 45" fill="none" stroke="var(--primary)" strokeWidth="1.5" className="flow-line opacity-40" />
+              <path d="M 200 45 Q 275 70 350 100" fill="none" stroke="var(--primary)" strokeWidth="1.5" className="flow-line opacity-40" />
+            </>
+          )}
+
+          {nodes.map(n => {
+            const isActive = activeStage && n.activeStages.includes(activeStage);
+            return (
+              <g key={n.id} className="transition-all duration-300">
+                {isActive && (
+                  <circle cx={n.x} cy={n.y} r="18" fill="var(--primary)" className="animate-ping opacity-25" />
+                )}
+                <circle
+                  cx={n.x}
+                  cy={n.y}
+                  r="10"
+                  fill={isActive ? "var(--primary)" : "#0c0f24"}
+                  stroke={isActive ? "#fff" : "rgba(255,255,255,0.1)"}
+                  strokeWidth="2"
+                  className="cursor-pointer hover:scale-110 transition-transform duration-200"
+                />
+                <text
+                  x={n.x}
+                  y={n.y + 22}
+                  textAnchor="middle"
+                  fill={isActive ? "#fff" : "#94a3b8"}
+                  fontSize="8"
+                  fontWeight="bold"
+                  className="font-mono text-[9px]"
+                >
+                  {n.label}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+function TelemetryGauges({ activeStage }: { activeStage: string | undefined }) {
+  const isBusy = activeStage && activeStage !== "complete" && activeStage !== "aborted" && activeStage !== "deploy_failed";
+  const cpu = isBusy ? 86 : 8;
+  const memory = isBusy ? 74 : 41;
+  const network = isBusy ? 92 : 3;
+
+  return (
+    <div className="glass-panel p-5 rounded-3xl border border-white/5 flex flex-col justify-between h-[230px]">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">RESOURCE TELEMETRY GAUGES</span>
+        <span className={`text-[9px] font-mono px-2 py-0.5 rounded font-bold ${isBusy ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 animate-pulse' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'}`}>
+          {isBusy ? 'NOC LOAD: HIGH' : 'NOC LOAD: OPTIMAL'}
+        </span>
+      </div>
+
+      <div className="grid grid-cols-3 gap-4 py-2">
+        {[
+          { label: "CPU LOAD", val: cpu, color: isBusy ? "text-amber-400" : "text-emerald-400", barColor: isBusy ? "bg-amber-500" : "bg-emerald-500" },
+          { label: "MEMORY", val: memory, color: "text-primary", barColor: "bg-primary" },
+          { label: "NETWORK", val: network, color: "text-cyan-400", barColor: "bg-cyan-500" }
+        ].map((item, idx) => (
+          <div key={idx} className="flex flex-col items-center justify-center p-3 bg-bg-dark rounded-2xl border border-white/5">
+            <span className="text-[9px] font-bold text-slate-500">{item.label}</span>
+            <span className={`text-xl font-extrabold tracking-tight my-1.5 ${item.color}`}>
+              {item.val}%
+            </span>
+            <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+              <div className={`h-full ${item.barColor} rounded-full transition-all duration-500`} style={{ width: `${item.val}%` }}></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const { pipelineList, pipelines, stats, handleEvent, setPipelines } = useAgentState();
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -53,6 +158,59 @@ export default function App() {
   // Judge Mode states
   const [showJudgeModal, setShowJudgeModal] = useState(false);
   const [judgeStep, setJudgeStep] = useState(1);
+
+  // Dynamic Theme state
+  const [currentTheme, setCurrentTheme] = useState("nebula");
+
+  // CLI Console state
+  const [terminalInput, setTerminalInput] = useState("");
+  const [terminalHistory, setTerminalHistory] = useState<any[]>([
+    { type: 'output', text: 'Zero-Sync Autonomous Debugger Console v1.2.6' },
+    { type: 'output', text: 'Type "help" to view available NOC operations.' }
+  ]);
+
+  const handleTerminalSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const cmd = terminalInput.trim();
+    if (!cmd) return;
+
+    const newHistory = [...terminalHistory, { type: 'input', text: terminalInput }];
+    setTerminalInput("");
+
+    const parts = cmd.toLowerCase().split(" ");
+    const primaryCmd = parts[0];
+    const arg = parts.slice(1).join(" ");
+
+    let output = "";
+    if (primaryCmd === "help") {
+      output = "Available commands:\n  help                          - Show this list\n  health                        - Display platform health\n  outage [type]                 - Trigger error (null-ref, div-zero, missing-route)\n  theme [name]                  - Set theme preset (nebula, matrix, cyberpunk, crimson)\n  memory                        - Fetch memory ledger metrics\n  clear                         - Flush console log history";
+    } else if (primaryCmd === "health") {
+      output = `SYSTEM HEALTH REPORT:\n  AI Engine: ACTIVE (Claude 3.5 Sonnet)\n  Memory Layer: PARCLE ONLINE\n  Deploy Node: ENTER PRO CONNECTED\n  Uptime: ${uptime}\n  Database Nodes: Active Parity`;
+    } else if (primaryCmd === "clear") {
+      setTerminalHistory([]);
+      return;
+    } else if (primaryCmd === "outage") {
+      if (!arg || !["null-ref", "div-zero", "missing-route"].includes(arg)) {
+        output = "Error: Invalid outage type. Use 'null-ref', 'div-zero', or 'missing-route'.";
+      } else {
+        output = `Sending custom exception signal for '${arg}' ingest route...`;
+        triggerDemoError(arg);
+      }
+    } else if (primaryCmd === "theme") {
+      if (!arg || !["nebula", "matrix", "cyberpunk", "crimson"].includes(arg)) {
+        output = "Error: Select from 'nebula', 'matrix', 'cyberpunk', or 'crimson'.";
+      } else {
+        setCurrentTheme(arg);
+        output = `Theme preset successfully updated to: ${arg.toUpperCase()}`;
+      }
+    } else if (primaryCmd === "memory") {
+      output = `MEMORIES METRICS:\n  Total Recalls: ${analytics.total_memories}\n  Surgical Fixes: ${analytics.successful_fixes}\n  Namespace: bug-fixes`;
+    } else {
+      output = `Command not recognized: "${cmd}". Type "help" for a list of operations.`;
+    }
+
+    setTerminalHistory([...newHistory, { type: 'output', text: output }]);
+  };
 
   const consoleBottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -373,7 +531,7 @@ ${report.learning_summary}
   ];
 
   return (
-    <div className="flex h-screen overflow-hidden bg-bg-dark text-slate-100 font-sans relative">
+    <div className={`flex h-screen overflow-hidden bg-bg-dark text-slate-100 font-sans relative theme-${currentTheme}`}>
       {/* Background glowing effects wrapped to prevent document overflow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div className="glow-overlay w-[600px] h-[600px] bg-[#6366f1] top-[-200px] left-[-200px] animate-pulse-glow"></div>
@@ -474,6 +632,17 @@ ${report.learning_summary}
           </div>
 
           <div className="flex items-center gap-3">
+            <select
+              value={currentTheme}
+              onChange={(e) => setCurrentTheme(e.target.value)}
+              className="text-xs bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 outline-none font-semibold text-slate-300 hover:text-white cursor-pointer transition-all"
+            >
+              <option value="nebula" className="bg-bg-card">Nebula Accent</option>
+              <option value="matrix" className="bg-bg-card">Matrix Green</option>
+              <option value="cyberpunk" className="bg-bg-card">Cyberpunk Amber</option>
+              <option value="crimson" className="bg-bg-card">Crimson Edge</option>
+            </select>
+
             <button 
               className="text-xs flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-primary/20 bg-primary-soft text-primary hover:bg-primary hover:text-white transition-all shadow-glow"
               onClick={() => { setJudgeStep(1); setShowJudgeModal(true); }}
@@ -547,6 +716,16 @@ ${report.learning_summary}
           {activeTab === "errors" && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               
+              {/* Full Width Topological Mesh & Telemetry */}
+              <div className="lg:col-span-3 grid grid-cols-1 xl:grid-cols-3 gap-6">
+                <div className="xl:col-span-2">
+                  <ServiceMeshMap activeStage={selected?.latest_stage} />
+                </div>
+                <div className="xl:col-span-1">
+                  <TelemetryGauges activeStage={selected?.latest_stage} />
+                </div>
+              </div>
+
               {/* Left Column: Feed */}
               <div className="lg:col-span-1 glass-panel rounded-2xl flex flex-col overflow-hidden border border-white/5 max-h-[750px]">
                 <div className="p-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
@@ -614,6 +793,42 @@ ${report.learning_summary}
                       <span className="text-xs">No active incidents captured.</span>
                     </div>
                   )}
+                </div>
+
+                {/* Interactive CLI Console */}
+                <div className="p-4 border-t border-white/5 bg-white/5 flex flex-col h-[280px]">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <Terminal size={12} />
+                      DIAGNOSTIC SHELL
+                    </span>
+                    <span className="text-[9px] font-mono text-slate-500">SESSION: ACTIVE</span>
+                  </div>
+
+                  <div className="flex-1 bg-bg-dark rounded-xl border border-white/5 p-3 overflow-y-auto font-mono text-[10px] space-y-1.5 text-slate-300">
+                    {terminalHistory.map((h, i) => (
+                      <div key={i} className="whitespace-pre-wrap">
+                        {h.type === 'input' ? (
+                          <span className="text-primary font-bold">{`> `}<span className="text-white">{h.text}</span></span>
+                        ) : (
+                          <span className="text-slate-400">{h.text}</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <form onSubmit={handleTerminalSubmit} className="mt-3 flex gap-2">
+                    <input
+                      type="text"
+                      placeholder='Type command (e.g. "help")...'
+                      value={terminalInput}
+                      onChange={(e) => setTerminalInput(e.target.value)}
+                      className="flex-1 bg-bg-dark border border-white/5 rounded-xl px-3 py-2 text-xs font-mono text-white outline-none focus:border-primary/50"
+                    />
+                    <button type="submit" className="bg-primary hover:bg-primary-hover text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-glow">
+                      EXEC
+                    </button>
+                  </form>
                 </div>
               </div>
 

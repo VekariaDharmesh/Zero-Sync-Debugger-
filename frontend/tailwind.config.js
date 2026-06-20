@@ -8,14 +8,14 @@ export default {
     extend: {
       colors: {
         bg: {
-          dark: '#03050d',
-          card: '#0c0f24',
+          dark: 'var(--bg-dark, #03050d)',
+          card: 'var(--bg-card, #0c0f24)',
           input: '#0e122b',
         },
         primary: {
-          DEFAULT: '#6366f1',
-          hover: '#4f46e5',
-          soft: 'rgba(99, 102, 241, 0.08)',
+          DEFAULT: 'var(--primary, #6366f1)',
+          hover: 'var(--primary-hover, #4f46e5)',
+          soft: 'var(--primary-soft, rgba(99, 102, 241, 0.08))',
         },
         success: {
           DEFAULT: '#10b981',
@@ -40,7 +40,7 @@ export default {
         mono: ['"JetBrains Mono"', 'monospace'],
       },
       boxShadow: {
-        'glow': '0 0 20px rgba(99, 102, 241, 0.15)',
+        'glow': 'var(--shadow-glow, 0 0 20px rgba(99, 102, 241, 0.15))',
         'glow-success': '0 0 20px rgba(16, 185, 129, 0.15)',
         'glow-error': '0 0 20px rgba(239, 68, 68, 0.15)',
         'glow-purple': '0 0 25px rgba(168, 85, 247, 0.2)',

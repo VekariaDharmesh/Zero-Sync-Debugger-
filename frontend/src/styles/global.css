@@ -4,18 +4,57 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --primary-soft: rgba(99, 102, 241, 0.08);
+  --bg-dark: #03050d;
+  --bg-card: #0c0f24;
+  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.15);
+}
+
+.theme-matrix {
+  --primary: #10b981;
+  --primary-hover: #059669;
+  --primary-soft: rgba(16, 185, 129, 0.08);
+  --bg-dark: #020f0a;
+  --bg-card: #021a11;
+  --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.2);
+}
+
+.theme-cyberpunk {
+  --primary: #f59e0b;
+  --primary-hover: #d97706;
+  --primary-soft: rgba(245, 158, 11, 0.08);
+  --bg-dark: #120b02;
+  --bg-card: #1c1102;
+  --shadow-glow: 0 0 20px rgba(245, 158, 11, 0.2);
+}
+
+.theme-crimson {
+  --primary: #ec4899;
+  --primary-hover: #db2777;
+  --primary-soft: rgba(236, 72, 153, 0.08);
+  --bg-dark: #14020a;
+  --bg-card: #1f0310;
+  --shadow-glow: 0 0 20px rgba(236, 72, 153, 0.2);
+}
+
 html, body, #root {
   height: 100% !important;
   width: 100% !important;
-  background-color: #03050d !important;
+  background-color: var(--bg-dark, #03050d) !important;
   overflow: hidden !important;
   margin: 0 !important;
   padding: 0 !important;
+  transition: background-color 0.3s ease;
 }
 
 @layer base {
   body {
-    @apply bg-[#03050d] text-slate-100 antialiased font-sans selection:bg-primary/30 selection:text-white;
+    background-color: var(--bg-dark, #03050d);
+    @apply text-slate-100 antialiased font-sans selection:bg-primary/30 selection:text-white;
+    transition: background-color 0.3s ease;
   }
 }
 
