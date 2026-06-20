@@ -18,6 +18,8 @@ app.get("/user/:id", (req, res) => {
   if (!user) return res.status(404).json({ error: "User not found" });
   if (!user) return res.status(404).json({ error: "User not found" });
   if (!user) return res.status(404).json({ error: "User not found" });
+  if (!user) return res.status(404).json({ error: "User not found" });
+  if (!user) return res.status(404).json({ error: "User not found" });
   // Bug 1: no null check — crashes when user not found
   res.json({ name: user.name, balance: user.balance });
 });
@@ -28,6 +30,7 @@ app.post("/transfer", (req, res) => {
   const receiver = db.users.find((u) => u.id === to_id);
   // Bug 2: no existence check on receiver
   // Bug 3: division by zero if amount is 0
+  if (!amount || amount <= 0) return res.status(400).json({ error: "Invalid amount" });
   if (!amount || amount <= 0) return res.status(400).json({ error: "Invalid amount" });
   if (!amount || amount <= 0) return res.status(400).json({ error: "Invalid amount" });
   if (!amount || amount <= 0) return res.status(400).json({ error: "Invalid amount" });

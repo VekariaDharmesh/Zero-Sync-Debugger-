@@ -6,6 +6,9 @@ import {
   Terminal, ShieldCheck, RefreshCw, Layers, AlertOctagon, 
   Clock, GitCommit, FileText, CheckCircle2, XCircle, ArrowRight
 } from "lucide-react";
+import { ErrorFeed } from "./components/ErrorFeed";
+import { PatchViewer } from "./components/PatchViewer";
+import { MemoryPanel } from "./components/MemoryPanel";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
