@@ -374,9 +374,11 @@ ${report.learning_summary}
 
   return (
     <div className="flex h-screen overflow-hidden bg-bg-dark text-slate-100 font-sans relative">
-      {/* Background glowing effects */}
-      <div className="glow-overlay w-[600px] h-[600px] bg-[#6366f1] top-[-200px] left-[-200px] animate-pulse-glow"></div>
-      <div className="glow-overlay w-[500px] h-[500px] bg-[#a855f7] bottom-[-150px] right-[-150px] animate-pulse-glow"></div>
+      {/* Background glowing effects wrapped to prevent document overflow */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="glow-overlay w-[600px] h-[600px] bg-[#6366f1] top-[-200px] left-[-200px] animate-pulse-glow"></div>
+        <div className="glow-overlay w-[500px] h-[500px] bg-[#a855f7] bottom-[-150px] right-[-150px] animate-pulse-glow"></div>
+      </div>
 
       {/* Sidebar Navigation */}
       <aside className={`glass-panel border-r border-white/5 flex flex-col justify-between transition-all duration-300 z-10 ${sidebarCollapsed ? 'w-20' : 'w-72'}`}>
