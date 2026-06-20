@@ -11,9 +11,24 @@ import os
 
 PENDING_PIPELINES = {}
 
+def calculate_memory_impact(confidence_before: int, confidence_after: int) -> dict:
+    impact = confidence_after - confidence_before
+    if impact >= 25:
+        level = "high"
+    elif impact >= 10:
+        level = "medium"
+    else:
+        level = "low"
+    return {
+        "confidence_before": confidence_before,
+        "confidence_after": confidence_after,
+        "memory_impact": impact,
+        "impact_level": level
+    }
+
 async def run_pipeline(error: ErrorRecord):
     start = time.time()
-    pipeline_id = f"inc-{int(start)}-{str(uuid_hex()[:4])}"
+    pipeline_id = f"inc-{int(start)}-{str(uuid.uuid4().hex[:4])}"
     
     # 1. Error Received
     await broadcast({
@@ -74,7 +89,13 @@ async def run_pipeline(error: ErrorRecord):
     reasoning = await reason(error, memory_hits)
     await asyncio.sleep(0.8)
 
-    confidence_score = reasoning.get("confidence_score", 90)
+    confidence_before = reasoning.get("confidence_before", 60)
+    confidence_after = reasoning.get("confidence_after", 90)
+    
+    impact_data = calculate_memory_impact(confidence_before, confidence_after)
+    memory_impact = impact_data["memory_impact"]
+    impact_level = impact_data["impact_level"]
+
     risk_level = reasoning.get("risk_level", "low")
     root_cause = reasoning.get("root_cause", "")
     fix_summary = reasoning.get("fix_summary", "")
@@ -85,7 +106,10 @@ async def run_pipeline(error: ErrorRecord):
     await broadcast({
         "pipeline_id": pipeline_id,
         "stage": "patch_generated",
-        "confidence_score": confidence_score,
+        "confidence_before": confidence_before,
+        "confidence_after": confidence_after,
+        "memory_impact": memory_impact,
+        "impact_level": impact_level,
         "risk_level": risk_level,
         "root_cause": root_cause,
         "fix_summary": fix_summary,
@@ -143,7 +167,8 @@ async def run_pipeline(error: ErrorRecord):
         "fix_summary": fix_summary,
         "affected_file": affected_file,
         "reasoning": reasoning,
-        "start_time": start
+        "start_time": start,
+        "impact_data": impact_data
     }
 
     # Backup the original target file for rollback support
@@ -152,7 +177,7 @@ async def run_pipeline(error: ErrorRecord):
 
     # 8. Confidence/Risk Check
     # Pause if risk is medium or high
-    if risk_level.lower() in ["medium", "high"] or confidence_score < 75:
+    if risk_level.lower() in ["medium", "high"] or confidence_after < 75:
         PENDING_PIPELINES[pipeline_id] = pipeline_state
         await broadcast({
             "pipeline_id": pipeline_id,
@@ -174,8 +199,9 @@ async def execute_deployment(state: dict):
     affected_file = state["affected_file"]
     reasoning = state["reasoning"]
     start = state["start_time"]
+    impact_data = state["impact_data"]
 
-    # 8. Enter Pro Deployment (streaming live console build logs)
+    # 8. Enter Pro Deployment
     await broadcast({
         "pipeline_id": pipeline_id,
         "stage": "deploying",
@@ -183,7 +209,6 @@ async def execute_deployment(state: dict):
         "time_relative": relative_time(start)
     })
     
-    # Broadcast simulated console logs for deep visibility
     logs = [
         "Connecting to Enter Pro API environment...",
         "Applying surgical unified diff patch...",
@@ -224,8 +249,10 @@ async def execute_deployment(state: dict):
         outcome=outcome,
         tokens_used=reasoning.get("tokens_used", 0),
         duration_seconds=round(time.time() - start, 2),
-        confidence_score=reasoning.get("confidence_score", 90),
-        risk_level=reasoning.get("risk_level", "low"),
+        confidence_before=impact_data["confidence_before"],
+        confidence_after=impact_data["confidence_after"],
+        memory_impact=impact_data["memory_impact"],
+        impact_level=impact_data["impact_level"],
         root_cause=reasoning.get("root_cause", "")
     )
     
@@ -256,6 +283,3 @@ def datetime_string() -> str:
 
 def relative_time(start_time: float) -> str:
     return f"{round(time.time() - start_time, 1)}s"
-
-def uuid_hex() -> str:
-    return uuid.uuid4().hex

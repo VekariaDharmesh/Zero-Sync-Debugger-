@@ -23,6 +23,7 @@ app.post("/transfer", (req, res) => {
   const { from_id, to_id, amount } = req.body;
   const sender = db.users.find((u) => u.id === from_id);
   const receiver = db.users.find((u) => u.id === to_id);
+  if (!amount || amount <= 0) return res.status(400).json({ error: "Invalid amount" });
   const fee = 10 / amount;
   sender.balance -= amount + fee;
   receiver.balance += amount;

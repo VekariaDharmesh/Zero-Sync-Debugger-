@@ -25,6 +25,12 @@ class MemoryHit(BaseModel):
     previous_root_cause: Optional[str] = ""
     previous_fix_summary: Optional[str] = ""
     previous_deployment_result: Optional[str] = ""
+    confidence_before: Optional[int] = 60
+    confidence_after: Optional[int] = 90
+    memory_impact: Optional[int] = 30
+    impact_level: Optional[str] = "medium"
+    times_reused: Optional[int] = 0
+    last_used: Optional[str] = ""
 
 class FixRecord(BaseModel):
     error_record: ErrorRecord
@@ -33,6 +39,10 @@ class FixRecord(BaseModel):
     outcome: str
     tokens_used: int
     duration_seconds: float
-    confidence_score: int = 90
-    risk_level: str = "low"
+    confidence_before: int = 60
+    confidence_after: int = 90
+    memory_impact: int = 30
+    impact_level: str = "medium"
     root_cause: str = ""
+    times_reused: int = 0
+    last_used: str = ""

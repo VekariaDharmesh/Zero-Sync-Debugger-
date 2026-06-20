@@ -11,13 +11,14 @@ Your job:
 2. Review any similar past bugs retrieved from memory
 3. Identify the root cause and explain it in plain language, explaining how memory influenced this fix
 4. Generate a precise, minimal patch that fixes the issue without introducing new problems
-5. Provide a confidence score (integer percentage 0-100) and risk assessment ("low", "medium", or "high")
+5. Provide a confidence score BEFORE memory retrieval (integer 0-100, what a generic model would estimate) and a confidence score AFTER memory retrieval (integer 0-100, incorporating the retrieved patch)
 6. Write a clear one-sentence summary of the fix
 
 Output format — return only valid JSON, no markdown fences, no explanation outside the JSON:
 {
   "root_cause": "detailed paragraph explaining why this error occurs, citing mitigation patterns",
-  "confidence_score": 94,
+  "confidence_before": 61,
+  "confidence_after": 94,
   "risk_level": "low" | "medium" | "high",
   "fix_summary": "one sentence describing what the patch does",
   "patch_diff": "unified diff format patch string",
@@ -34,7 +35,8 @@ Rules:
 MOCK_RESPONSES = {
     "TypeError": {
         "root_cause": "The current incident appears similar to two historical memory entries. The root cause is an unchecked user lookup returning null. A previous successful fix introduced a null guard before property access. The generated patch follows the same mitigation pattern.",
-        "confidence_score": 94,
+        "confidence_before": 61,
+        "confidence_after": 94,
         "risk_level": "low",
         "fix_summary": "Added a null check guard returning 404 status when user is not found.",
         "affected_file": "index.js",
@@ -50,7 +52,8 @@ MOCK_RESPONSES = {
     },
     "RangeError": {
         "root_cause": "The incident matches a past RangeError in services/pricing.js. The current code calculates a fee by dividing by transaction amount without safeguarding for division-by-zero. The patch inserts a conditional guard matching prior incident responses.",
-        "confidence_score": 92,
+        "confidence_before": 55,
+        "confidence_after": 92,
         "risk_level": "low",
         "fix_summary": "Added a check to ensure transfer amount is greater than zero to prevent division by zero.",
         "affected_file": "index.js",
@@ -65,7 +68,8 @@ MOCK_RESPONSES = {
     },
     "UndefinedReceiver": {
         "root_cause": "The transfer algorithm executes state updates on sender/receiver database records before verifying if they exist. Based on past memories, this triggers undefined property access crashes. A manual approval review is recommended as the patch has moderate complexity.",
-        "confidence_score": 63,
+        "confidence_before": 45,
+        "confidence_after": 63,
         "risk_level": "medium",
         "fix_summary": "Added check to ensure both sender and receiver exist before updating balances.",
         "affected_file": "index.js",
@@ -82,7 +86,6 @@ MOCK_RESPONSES = {
 
 async def reason(error: ErrorRecord, memory_hits: List[MemoryHit]) -> dict:
     if not ANTHROPIC_API_KEY:
-        # Fallback simulation mapping
         err_type = error.error_type
         if "division" in error.message.lower() or "zero" in error.message.lower() or "rangeerror" in err_type.lower():
             res = dict(MOCK_RESPONSES["RangeError"])
