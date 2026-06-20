@@ -497,7 +497,7 @@ export default function App() {
                     </p>
                   ) : (
                     <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--text-dim)", marginTop: "10px" }}>
-                      <Loader size={12} className="spin" />
+                      <RefreshCw size={12} className="spin" />
                       <span>Investigating...</span>
                     </div>
                   )}
