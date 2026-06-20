@@ -716,14 +716,14 @@ ${report.learning_summary}
           {activeTab === "errors" && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               
-              {/* Full Width Topological Mesh & Telemetry */}
-              <div className="lg:col-span-3 grid grid-cols-1 xl:grid-cols-3 gap-6">
-                <div className="xl:col-span-1">
-                  <TelemetryGauges activeStage={selected?.latest_stage} />
-                </div>
-                <div className="xl:col-span-2">
-                  <ServiceMeshMap activeStage={selected?.latest_stage} />
-                </div>
+              {/* Telemetry Gauges (Left Column, Row 1) */}
+              <div className="lg:col-span-1">
+                <TelemetryGauges activeStage={selected?.latest_stage} />
+              </div>
+
+              {/* Service Mesh Map (Right Column, Row 1) */}
+              <div className="lg:col-span-2">
+                <ServiceMeshMap activeStage={selected?.latest_stage} />
               </div>
 
               {/* Left Column: Feed */}
