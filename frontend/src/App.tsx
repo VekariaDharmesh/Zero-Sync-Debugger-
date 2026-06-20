@@ -735,38 +735,113 @@ ${report.learning_summary}
                       </div>
                     </div>
 
-                    {/* Parcle Memory Query matches */}
+                    {/* Memory Retrieval (Query, Confidence, Citations) */}
                     <div className="glass-panel p-6 rounded-3xl border border-white/5 space-y-4">
-                      <h4 className="text-[10px] font-extrabold text-slate-400 tracking-wider uppercase">Parcle Associated Ledger Matches</h4>
-                      {selected.hits_data && selected.hits_data.length > 0 ? (
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="text-slate-400">Semantic Matching Level</span>
-                            <span className="text-emerald-400 font-bold">{Math.round(selected.top_similarity * 100)}% Similarity Match</span>
-                          </div>
-                          
-                          <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                            <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${Math.round(selected.top_similarity * 100)}%` }}></div>
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-[10px] font-extrabold text-slate-400 tracking-wider uppercase">Parcle Memory Retrieval Status</h4>
+                        {selected.parcle_search_status && (
+                          <span className={`text-[9px] font-bold px-2 py-0.5 rounded border ${
+                            selected.parcle_search_status === "searching"
+                              ? 'bg-amber-500/10 text-amber-400 border-amber-500/20 animate-pulse'
+                              : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                          }`}>
+                            {selected.parcle_search_status.toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+
+                      {selected.parcle_search_status === "searching" ? (
+                        <div className="flex items-center gap-3 text-xs text-slate-400 py-3">
+                          <RefreshCw size={14} className="animate-spin text-primary" />
+                          <span>Searching Parcle memory registry...</span>
+                        </div>
+                      ) : selected.parcle_search_answer ? (
+                        <div className="space-y-3.5">
+                          <div className="bg-bg-dark border border-white/5 p-4 rounded-2xl space-y-2.5 text-xs text-slate-300">
+                            <div className="flex items-center justify-between">
+                              <span className="font-extrabold text-primary">Retrieved Answer Summary</span>
+                              <span className="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded font-bold">
+                                {Math.round((selected.parcle_search_confidence || 0.85) * 100)}% Confidence
+                              </span>
+                            </div>
+                            <p className="text-slate-300 leading-relaxed font-semibold">{selected.parcle_search_answer}</p>
                           </div>
 
-                          {selected.hits_data.slice(0, 1).map((hit: any, i: number) => (
-                            <div key={i} className="bg-bg-dark border border-white/5 p-4 rounded-2xl space-y-2.5 text-xs text-slate-300">
-                              <div className="flex items-center justify-between">
-                                <span className="font-extrabold text-primary tracking-tight">{hit.error_type}</span>
-                                <span className="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded font-bold">{Math.round(hit.similarity_score * 100)}% Match</span>
-                              </div>
-                              <p className="text-slate-400 font-mono text-[11px] bg-white/5 p-2 rounded">{hit.message}</p>
-                              <div className="grid grid-cols-2 gap-3 text-[11px]">
-                                <div><strong>Previous Cause:</strong> {hit.previous_root_cause || "Unchecked query parameter"}</div>
-                                <div><strong>Applied patch:</strong> {hit.previous_fix_summary || hit.fix_summary}</div>
+                          {/* Citations */}
+                          {selected.parcle_search_citations && selected.parcle_search_citations.length > 0 && (
+                            <div className="space-y-1.5">
+                              <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Sources Cited:</span>
+                              <div className="flex flex-wrap gap-2">
+                                {selected.parcle_search_citations.map((cit: any, i: number) => (
+                                  <span key={i} className="text-[10px] font-mono bg-white/5 text-slate-300 px-2.5 py-1 rounded-lg border border-white/5">
+                                    {cit.type || "Doc"}: {cit.id}
+                                  </span>
+                                ))}
                               </div>
                             </div>
-                          ))}
+                          )}
                         </div>
                       ) : (
-                        <p className="text-xs text-slate-500 text-center py-4">No past incidents registered in Parcle namespace.</p>
+                        <p className="text-xs text-slate-500 py-2">No preceding matches found in Parcle long-term memory namespaces.</p>
                       )}
                     </div>
+
+                    {/* Memory Influence Viewer (Confidence Before/After & Impact Score) */}
+                    {selected.confidence_before && (
+                      <div className="glass-panel p-6 rounded-3xl border border-primary/20 bg-primary-soft/10 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-[10px] font-extrabold text-primary tracking-wider uppercase">Memory Influence Viewer</h4>
+                          <span className="text-xs font-bold text-emerald-400">+{selected.memory_impact || (selected.confidence_after - selected.confidence_before)}% Impact Score</span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-6">
+                          <div>
+                            <span className="text-[9px] font-bold text-slate-500 uppercase block mb-1.5">Confidence Before Memory</span>
+                            <div className="flex items-center gap-2">
+                              <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                <div className="h-full bg-slate-500 rounded-full" style={{ width: `${selected.confidence_before}%` }}></div>
+                              </div>
+                              <span className="text-xs font-bold text-slate-400">{selected.confidence_before}%</span>
+                            </div>
+                          </div>
+
+                          <div>
+                            <span className="text-[9px] font-bold text-slate-500 uppercase block mb-1.5">Confidence After Memory</span>
+                            <div className="flex items-center gap-2">
+                              <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${selected.confidence_after}%` }}></div>
+                              </div>
+                              <span className="text-xs font-bold text-emerald-400">{selected.confidence_after}%</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Memory Save Status (Saving / Saved status & keys) */}
+                    {selected.parcle_save_status && (
+                      <div className="glass-panel p-6 rounded-3xl border border-white/5 flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                          {selected.parcle_save_status === "saving" ? (
+                            <>
+                              <RefreshCw size={16} className="animate-spin text-amber-500" />
+                              <div>
+                                <h4 className="font-bold text-xs text-white">Ingesting dialog context...</h4>
+                                <p className="text-[10px] text-slate-400">Writing resolution node to Parcle long-term memory namespace.</p>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle2 size={16} className="text-emerald-400" />
+                              <div>
+                                <h4 className="font-bold text-xs text-emerald-400">Memory Committed successfully</h4>
+                                <p className="text-[10px] text-slate-400">Session ID: <strong className="font-mono text-slate-300">{selected.parcle_session_id}</strong> | Event ID: <strong className="font-mono text-slate-300">{selected.parcle_event_id}</strong></p>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    )}
 
                     {/* Code diff */}
                     {selected.patch_diff && (

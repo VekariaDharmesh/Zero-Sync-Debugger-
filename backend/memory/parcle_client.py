@@ -139,3 +139,44 @@ async def rollback_deployment(payload: dict):
         return {"status": "rolled_back", "file": affected_file}
     else:
         return {"status": "rolled_back_simulated", "file": affected_file}
+
+from services.parcle_service import save_memory, search_memory, get_history_ledger
+
+@router.post("/save")
+async def save_parcle_memory(payload: dict):
+    error_type = payload.get("error_type", "TypeError")
+    error_message = payload.get("error_message", "")
+    stack_trace = payload.get("stack_trace", "")
+    root_cause = payload.get("root_cause", "")
+    fix_summary = payload.get("fix_summary", "")
+    confidence = payload.get("confidence", 90)
+    deployment_result = payload.get("deployment_result", "success")
+    
+    result = await save_memory(
+        error_type=error_type,
+        error_message=error_message,
+        stack_trace=stack_trace,
+        root_cause=root_cause,
+        fix_summary=fix_summary,
+        confidence=confidence,
+        deployment_result=deployment_result
+    )
+    return result
+
+@router.post("/search")
+async def search_parcle_memory(payload: dict):
+    error_message = payload.get("error_message", "")
+    stack_trace = payload.get("stack_trace", "")
+    error_type = payload.get("error_type", "")
+    
+    result = await search_memory(
+        error_message=error_message,
+        stack_trace=stack_trace,
+        error_type=error_type
+    )
+    return result
+
+@router.get("/history")
+async def get_parcle_history():
+    return {"history": get_history_ledger()}
+

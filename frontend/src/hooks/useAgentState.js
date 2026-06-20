@@ -31,6 +31,23 @@ export function useAgentState() {
           top_similarity: event.top_similarity,
           hits_data: event.hits_data
         }),
+        ...(stage === "MEMORY_SEARCH_STARTED" && {
+          parcle_search_status: "searching",
+        }),
+        ...(stage === "MEMORY_SEARCH_COMPLETED" && {
+          parcle_search_status: "completed",
+          parcle_search_answer: event.answer,
+          parcle_search_confidence: event.confidence,
+          parcle_search_citations: event.citations,
+        }),
+        ...(stage === "MEMORY_SAVE_STARTED" && {
+          parcle_save_status: "saving",
+        }),
+        ...(stage === "MEMORY_SAVE_COMPLETED" && {
+          parcle_save_status: "saved",
+          parcle_session_id: event.session_id,
+          parcle_event_id: event.event_id,
+        }),
         ...(stage === "patch_generated" && {
           patch_diff: event.patch_diff,
           root_cause: event.root_cause,

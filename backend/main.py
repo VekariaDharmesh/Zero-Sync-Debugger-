@@ -15,6 +15,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from services.parcle_service import initialize_user
+
+@app.on_event("startup")
+def startup_event():
+    initialize_user()
+
 app.include_router(sentry_router, prefix="/ingest")
 app.include_router(custom_router, prefix="/ingest")
 app.include_router(sse_router, prefix="/stream")

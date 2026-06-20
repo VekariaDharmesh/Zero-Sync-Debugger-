@@ -63,6 +63,31 @@ async def run_pipeline(error: ErrorRecord):
         "timestamp": datetime_string(),
         "time_relative": relative_time(start)
     })
+    
+    # Broadcast SDK Search Started event
+    await broadcast({
+        "pipeline_id": pipeline_id,
+        "stage": "MEMORY_SEARCH_STARTED",
+        "timestamp": datetime_string()
+    })
+    
+    from services.parcle_service import search_memory
+    parcle_result = await search_memory(
+        error_message=error.message,
+        stack_trace=error.stack_trace,
+        error_type=error.error_type
+    )
+    
+    # Broadcast SDK Search Completed event
+    await broadcast({
+        "pipeline_id": pipeline_id,
+        "stage": "MEMORY_SEARCH_COMPLETED",
+        "answer": parcle_result.get("answer"),
+        "confidence": parcle_result.get("confidence"),
+        "citations": parcle_result.get("citations"),
+        "timestamp": datetime_string()
+    })
+    
     memory_hits = await query_similar_bugs(error)
     await asyncio.sleep(0.7)
 
@@ -86,7 +111,7 @@ async def run_pipeline(error: ErrorRecord):
         "timestamp": datetime_string(),
         "time_relative": relative_time(start)
     })
-    reasoning = await reason(error, memory_hits)
+    reasoning = await reason(error, memory_hits, parcle_result)
     await asyncio.sleep(0.8)
 
     confidence_before = reasoning.get("confidence_before", 60)
@@ -242,6 +267,33 @@ async def execute_deployment(state: dict):
         return
 
     # 9. Memory Write Complete
+    # Broadcast SDK Save Started
+    await broadcast({
+        "pipeline_id": pipeline_id,
+        "stage": "MEMORY_SAVE_STARTED",
+        "timestamp": datetime_string()
+    })
+    
+    from services.parcle_service import save_memory
+    save_result = await save_memory(
+        error_type=error.error_type,
+        error_message=error.message,
+        stack_trace=error.stack_trace,
+        root_cause=reasoning.get("root_cause", ""),
+        fix_summary=fix_summary,
+        confidence=impact_data["confidence_after"],
+        deployment_result=outcome
+    )
+    
+    # Broadcast SDK Save Completed
+    await broadcast({
+        "pipeline_id": pipeline_id,
+        "stage": "MEMORY_SAVE_COMPLETED",
+        "session_id": save_result.get("session_id"),
+        "event_id": save_result.get("event_id"),
+        "timestamp": datetime_string()
+    })
+
     fix = FixRecord(
         error_record=error,
         patch_diff=patch_diff,

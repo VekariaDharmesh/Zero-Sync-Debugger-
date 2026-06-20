@@ -84,7 +84,7 @@ MOCK_RESPONSES = {
     }
 }
 
-async def reason(error: ErrorRecord, memory_hits: List[MemoryHit]) -> dict:
+async def reason(error: ErrorRecord, memory_hits: List[MemoryHit], parcle_result: dict = None) -> dict:
     if not ANTHROPIC_API_KEY:
         err_type = error.error_type
         if "division" in error.message.lower() or "zero" in error.message.lower() or "rangeerror" in err_type.lower():
@@ -110,6 +110,14 @@ async def reason(error: ErrorRecord, memory_hits: List[MemoryHit]) -> dict:
                 f"Outcome: {hit.outcome}\n"
                 f"Previous Root Cause: {hit.previous_root_cause}\n"
             )
+
+    if parcle_result and parcle_result.get("answer"):
+        memory_context += (
+            f"\n\n[PARCLE LONG-TERM MEMORY RECALL]\n"
+            f"Recall Summary: {parcle_result.get('answer')}\n"
+            f"Recall Confidence: {parcle_result.get('confidence')}\n"
+            f"Citations: {parcle_result.get('citations')}\n"
+        )
 
     user_message = (
         f"INCOMING ERROR\n"
