@@ -20,10 +20,10 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 function ServiceMeshMap({ activeStage }: { activeStage: string | undefined }) {
   const nodes = [
-    { id: 'ingest', label: 'Ingest Webhook', x: 50, y: 100, activeStages: ['received', 'context_extraction'] },
+    { id: 'ingest', label: 'Ingest Webhook', x: 75, y: 100, activeStages: ['received', 'context_extraction'] },
     { id: 'memory', label: 'Parcle Memory', x: 200, y: 155, activeStages: ['querying_memory', 'similarity_scoring', 'MEMORY_SEARCH_STARTED', 'MEMORY_SEARCH_COMPLETED', 'MEMORY_SAVE_STARTED', 'MEMORY_SAVE_COMPLETED'] },
     { id: 'reasoner', label: 'Claude 3.5 AI', x: 200, y: 45, activeStages: ['reasoning', 'patch_generated', 'patch_validation'] },
-    { id: 'deployer', label: 'Enter Pro Deploy', x: 350, y: 100, activeStages: ['deploying', 'complete'] }
+    { id: 'deployer', label: 'Enter Pro Deploy', x: 325, y: 100, activeStages: ['deploying', 'complete'] }
   ];
 
   return (
@@ -37,17 +37,17 @@ function ServiceMeshMap({ activeStage }: { activeStage: string | undefined }) {
 
       <div className="flex-1 w-full flex items-center justify-center relative">
         <svg viewBox="0 0 400 200" className="w-full h-full max-h-[160px] overflow-visible">
-          <path d="M 50 100 Q 125 70 200 45" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1.5" />
-          <path d="M 50 100 Q 125 130 200 155" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1.5" />
+          <path d="M 75 100 Q 137.5 72.5 200 45" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1.5" />
+          <path d="M 75 100 Q 137.5 127.5 200 155" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1.5" />
           <path d="M 200 155 L 200 45" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1.5" />
-          <path d="M 200 45 Q 275 70 350 100" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1.5" />
+          <path d="M 200 45 Q 262.5 72.5 325 100" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1.5" />
 
           {activeStage && (
             <>
-              <path d="M 50 100 Q 125 70 200 45" fill="none" stroke="var(--primary)" strokeWidth="1.5" className="flow-line opacity-40" />
-              <path d="M 50 100 Q 125 130 200 155" fill="none" stroke="var(--primary)" strokeWidth="1.5" className="flow-line opacity-40" />
+              <path d="M 75 100 Q 137.5 72.5 200 45" fill="none" stroke="var(--primary)" strokeWidth="1.5" className="flow-line opacity-40" />
+              <path d="M 75 100 Q 137.5 127.5 200 155" fill="none" stroke="var(--primary)" strokeWidth="1.5" className="flow-line opacity-40" />
               <path d="M 200 155 L 200 45" fill="none" stroke="var(--primary)" strokeWidth="1.5" className="flow-line opacity-40" />
-              <path d="M 200 45 Q 275 70 350 100" fill="none" stroke="var(--primary)" strokeWidth="1.5" className="flow-line opacity-40" />
+              <path d="M 200 45 Q 262.5 72.5 325 100" fill="none" stroke="var(--primary)" strokeWidth="1.5" className="flow-line opacity-40" />
             </>
           )}
 
