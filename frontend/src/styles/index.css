@@ -557,7 +557,6 @@ video {
 }
 
 body{
-  overflow-x: hidden;
   --tw-bg-opacity: 1;
   background-color: rgb(3 5 13 / var(--tw-bg-opacity, 1));
   font-family: "Plus Jakarta Sans", Inter, system-ui, sans-serif;
@@ -1640,6 +1639,14 @@ body::selection{
 
 .duration-300{
   transition-duration: 300ms;
+}
+
+html, body, #root {
+  height: 100%;
+  background-color: #03050d;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 /* Custom Scrollbar styling */

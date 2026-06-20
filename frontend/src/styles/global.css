@@ -4,9 +4,17 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body, #root {
+  height: 100%;
+  background-color: #03050d;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
 @layer base {
   body {
-    @apply bg-[#03050d] text-slate-100 antialiased font-sans overflow-x-hidden selection:bg-primary/30 selection:text-white;
+    @apply bg-[#03050d] text-slate-100 antialiased font-sans selection:bg-primary/30 selection:text-white;
   }
 }
 
