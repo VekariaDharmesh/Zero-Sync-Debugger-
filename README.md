@@ -1,117 +1,202 @@
 # Zero-Sync Debugger
+### Memory-Driven Autonomous Incident Recovery Command Center
+### National Security & Predictive Infrastructure Platform
+### AI-Driven (Claude 3.5 Sonnet + Parcle Vector Memory + Enter Pro) — Zero Manual Inspection Dependency
 
-Zero-Sync Debugger is an autonomous, stateful engineering teammate that intercepts application errors, references historical memory via Parcle, reasons on code repairs using Claude 3.5 Sonnet, and deploys surgical hotfixes through Enter Pro.
+📌 **What is Zero-Sync Debugger?**
+Zero-Sync Debugger is an autonomous, mission-critical operations command center that intercepts production runtime errors, references historical incident memory via Parcle, reasons on code repairs using Claude 3.5 Sonnet, and deploys surgical hotfixes through Enter Pro without manual debugging.
 
-## How it works
+It learns the "normal" operational state and logs resolution patterns of a healthy application network, flagging anomalies such as:
 
-Traditional AI coding assistants are stateless. Zero-Sync Debugger maintains long-term engineering memory using Parcle. When an error is received, the agent:
-1. Queries Parcle for similar historical bugs and patches.
-2. Incorporates retrieved memory context into Claude 3.5 Sonnet's reasoning space.
-3. Generates a unified diff patch and performs dry-run validation.
-4. Pauses for manual confirmation on medium/low confidence patches, or auto-deploys high confidence patches via Enter Pro.
-5. Saves the fix results and outcome metrics back into Parcle memory.
+- **Structural Exceptions**: Undefined variable lookups, null references, and range boundary errors.
+- **Context Recalls**: Semantic matches of historical fixes stored in Parcle vector memory.
+- **Vulnerability Risks**: Automated patch evaluation to prevent regression errors.
 
-## Tech Stack
-- **Memory**: [Parcle](https://parcle.ai) (Stateful engineering memory layer)
-- **Deployment**: [Enter Pro](https://enterapp.pro) (Autonomous Hotfix Execution)
-- **Orchestration**: FastAPI (Python)
-- **Dashboard**: React + Server-Sent Events (SSE)
+---
 
-## Running Locally
+## ✨ Main Features
+- **Zero-Day Incident Recovery**: Automated identification, diagnosis, and fix generation of unknown application bugs.
+- **Parcle Vector Memory**: Long-term state storage and semantic query search of preceding incidents.
+- **Memory Influence Analyzer**: Real-time analytics displaying confidence improvements before and after memory retrieval.
+- **Reasoning Pipeline Flow**: Interactive status monitoring tracking incident triage from capture to deploy.
+- **Enter Pro Hotfix Deployments**: Autonomous surgical unified diff patching and rolling container builds.
+- **One-Click Safe Rollback**: Instantly revert active patches to restore original service code stability.
+- **Cyber-NOC Operations Dashboard**: A high-end dark luxury telemetry interface built for mission control operators.
 
-1. **Clone & Set up Environment**:
-   ```bash
-   cd backend
-   cp .env.example .env
-   # Populate API Keys in .env
-   ```
+---
 
-2. **Initialize Python Environment**:
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
-   ```
+## 🚀 Quick Start (Installation)
 
-3. **Install and Start the Buggy Demo Server**:
-   ```bash
-   cd demo/buggy_app
-   npm install
-   node index.js
-   ```
-
-4. **Start the FastAPI Orchestrator**:
-   ```bash
-   cd ../..
-   venv/bin/uvicorn main:app --reload --port 8000
-   ```
-
-5. **Start the React Frontend**:
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
-
-Open `http://localhost:5173` to access the live dashboard.
-
-## Parcle SDK Integration
-
-Zero-Sync Debugger initializes the official Parcle SDK to manage long-term engineering memory state. Check the centralized implementation in [parcle_service.py](file:///Users/vekariadharmeshh/Desktop/Quackathon/backend/services/parcle_service.py).
-
-### Initializing Parcle Client
-```python
-from parcle import Parcle
-
-# Initialize the Parcle client using the API key
-client = Parcle(api_key=os.getenv("PARCLE_API_KEY"))
-
-# Create or reuse the zero_sync user on startup
-try:
-    client.create_user(user_id="zero_sync", name="Zero-Sync Debugger Operator")
-except Exception as e:
-    # Gracefully handles existing profiles (e.g. 409 Conflict)
-    pass
+### 1. Clone Repository
+```bash
+git clone https://github.com/VekariaDharmesh/Zero-Sync-Debugger-.git
+cd Zero-Sync-Debugger-
 ```
 
-### Ingesting Dialog (Incident Resolution)
-When a hotfix patch is successfully deployed, Zero-Sync records the incident state in Parcle memory using `ingest_dialog()`:
-```python
-messages = [
-    {"role": "user", "content": "TypeError: Cannot read property 'name' of undefined..."},
-    {"role": "assistant", "content": "Root Cause: Null lookup\nFix: Added guard...\nConfidence: 94\nDeployment: Success"}
-]
-res = client.ingest_dialog(user_id="zero_sync", messages=messages)
+### 2. Configure Environment Variables
+Create a `.env` configuration file in the `backend` folder:
+```bash
+cd backend
+cp .env.example .env
+# Populate ANTHROPIC_API_KEY, PARCLE_API_KEY, and ENTER_PRO credentials
 ```
 
-### Querying Memory
-Before Claude 3.5 Sonnet generates a fix, the pipeline queries past incident fixes using `search()`:
-```python
-# Returns similar memories, confidence scores, and documents citations
-res = client.search(user_id="zero_sync", query=error_query)
+### 3. Initialize Virtual Environment
+#### Linux / macOS
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+#### Windows
+```bash
+python -m venv venv
+.\venv\Scripts\activate
 ```
 
-
-## Enter Pro Integration
-
-Patches are automatically applied and hot-deployed.
-Check implementation in [deployer.py](file:///Users/vekariadharmeshh/Desktop/Quackathon/backend/agent/deployer.py).
-
-```python
-async def deploy_patch(patch_diff: str, fix_summary: str, affected_file: str) -> dict:
-    async with httpx.AsyncClient() as client:
-        response = await client.post(
-            f"https://api.enterapp.pro/v1/projects/{ENTER_PRO_PROJECT_ID}/apply-patch",
-            headers={"Authorization": f"Bearer {ENTER_PRO_API_KEY}"},
-            json={
-                "patch": patch_diff,
-                "commit_message": fix_summary,
-                "affected_file": affected_file,
-                "auto_deploy": True,
-            }
-        )
-        return response.json()
+### 4. Install Dependencies
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
-## Team
-Team Meridian — Shlok Shah, Het Patel, Dharmesh Vekaria, Ayush Mistry
+### 5. Start Application Nodes
+
+#### Node A – Launch Buggy Demo App (Express App target)
+```bash
+cd demo/buggy_app
+npm install
+node index.js
+```
+
+#### Node B – Start FastAPI Backend Server
+```bash
+cd ../..
+venv/bin/uvicorn main:app --reload --port 8000
+```
+
+#### Node C – Start React Frontend Client Dashboard
+```bash
+cd ../frontend
+npm install
+npm run dev
+```
+
+Open `http://localhost:5173` to access the Cyber-NOC mission control room.
+
+---
+
+## 📂 Project Structure
+```markdown
+Zero-Sync-Debugger-/
+│
+├── backend/
+│   ├── main.py                 # FastAPI Application Server Entrypoint
+│   ├── config.py               # Credentials & environment configurations
+│   ├── requirements.txt        # Python backend dependencies
+│   │
+│   ├── agent/
+│   │   ├── pipeline.py         # Autonomous workflow orchestrator & SSE broadcaster
+│   │   ├── reasoner.py         # Claude-3.5-Sonnet patch reasoning service
+│   │   ├── patcher.py          # Unified diff parser & dry-run validator
+│   │   └── deployer.py         # Enter Pro API integration & target server patch applier
+│   │
+│   ├── services/
+│   │   └── parcle_service.py   # Parcle client user provisioning, dialog ingest, & search
+│   │
+│   ├── memory/
+│   │   ├── parcle_client.py    # Memory endpoint routes (rollbacks, history ledger)
+│   │   └── schemas.py          # Pydantic schemas (ErrorRecords, FixRecords)
+│   │
+│   ├── ingest/
+│   │   ├── custom_logger.py    # Custom agent exception receiver webhook
+│   │   └── sentry_webhook.py   # Sentry incident ingestion route
+│   │
+│   ├── streams/
+│   │   └── sse.py              # Server-Sent Events subscription hub
+│   │
+│   └── demo/
+│       └── buggy_app/          # Target node server simulating real-time outages
+│
+└── frontend/
+    ├── src/
+    │   ├── App.tsx             # Cyber-NOC React Dashboard UI Component
+    │   ├── hooks/
+    │   │   ├── useAgentState.js # SSE event state pipeline parser
+    │   │   └── useEventStream.js# EventSource connection lifecycle hook
+    │   └── components/         # Premium modular UI widgets (PatchViewer, ErrorFeed)
+    │
+    ├── package.json            # Vite frontend node dependencies
+    └── vite.config.ts          # Vite build config
+```
+
+---
+
+## 🛠️ Full Setup Guide
+### Requirements
+- **Runtime Environment**: Python 3.10+, Node.js 18+
+- **API Access**: 
+  - Anthropic API Key (Claude-3.5 reasoning context)
+  - Parcle API Key (Long-term vector memory layer)
+  - Enter Pro Credentials (Production deployment orchestrator)
+
+---
+
+## 🔧 Typical Usage
+
+### 1. Simulating Outages
+- In the dashboard top bar, click **"Simulate Outage"** or trigger individual error endpoints manually.
+- The target server will throw an exception, immediately feeding it into the Sentry ingestion webhook.
+
+### 2. Monitoring Reasoning Pipelines
+- Follow the active reasoning nodes: **Captured → Query Memory → Match Score → Diagnosed → Patch Output → Validated → Deploying → Recovered**.
+- Observe the **Memory Influence Analyzer** calculating confidence rating improvements.
+
+### 3. Reviewing Memory Diffs
+- Head over to the **Memory Lifecycle** or **Engineering Journal** tabs.
+- Analyze the vector write logs, similarity metrics, and historical document citations.
+
+---
+
+## ⚠️ Notes & Limitations
+- **API Fallback Mode**: If valid credentials are not supplied, the platform falls back to a local simulation cache so core interface functionality is unaffected.
+- **Rollback Window**: rollbacks restore the target directory index files to their clean, unpatched backups stored prior to deployment.
+
+---
+
+## 🛠️ Troubleshooting
+| Problem | Solution |
+| :--- | :--- |
+| **Parcle SDK connection errors** | Ensure `PARCLE_API_KEY` is loaded in `.env` and contains correct permissions. |
+| **Port Conflicts** | Make sure ports `8000` (FastAPI), `3001` (Express App), and `5173` (Vite Dashboard) are not occupied. |
+| **SSE Logs Disconnected** | Verify the backend server is running and accessible at `http://localhost:8000`. |
+| **Empty Memory Stream** | Run the simulation sequence to populate Parcle ledger namespaces. |
+
+---
+
+## 🔮 Future Improvements
+- Multi-service telemetry tracking of distributed microservices.
+- Automatic recovery validation using isolated production-preview testing containers.
+- ChatOps integrations for Slack and Discord status reporting alerts.
+
+---
+
+## 📄 License
+MIT License — Free to use, modify, and distribute for operations research and infrastructure safety.
+
+---
+
+## ❤️ Contributing
+Pull requests are welcome for:
+- Improved computer science exception parsers.
+- Enhanced vector clustering algorithms.
+- Custom NOC dashboard widgets.
+
+---
+
+## 👨💻 Author
+**Dharmesh Vekaria & Team Meridian**
+Gandhinagar, Gujarat · 2026
+
+*Focused on national infrastructure safety & modern AI-driven threat detection.*
+
+🛡️ **Zero-Sync · Recover Faster.**
