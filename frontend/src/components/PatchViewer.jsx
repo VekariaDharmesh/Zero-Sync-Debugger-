@@ -1,94 +1,130 @@
 import React from "react";
-import ReactDiffViewer, { DiffMethod } from "react-diff-viewer-continued";
 
 export function PatchViewer({ patchDiff, affectedFile }) {
   if (!patchDiff) return null;
 
   const lines = patchDiff.split("\n");
-  const oldLines = [];
-  const newLines = [];
+  const parsedLines = [];
+  
+  let oldLineNum = 1;
+  let newLineNum = 1;
 
   for (const line of lines) {
-    if (line.startsWith("---") || line.startsWith("+++") || line.startsWith("@@")) continue;
+    if (line.startsWith("---") || line.startsWith("+++")) {
+      continue;
+    }
+    
+    // Parse hunk header
+    const hunkMatch = line.match(/^@@ -(\d+),?\d* \+(\d+),?\d* @@/);
+    if (hunkMatch) {
+      oldLineNum = parseInt(hunkMatch[1], 10);
+      newLineNum = parseInt(hunkMatch[2], 10);
+      parsedLines.push({
+        type: "hunk",
+        content: line,
+        oldLine: "",
+        newLine: "",
+        sign: ""
+      });
+      continue;
+    }
+
     if (line.startsWith("-")) {
-      oldLines.push(line.slice(1));
+      parsedLines.push({
+        type: "removed",
+        content: line.slice(1),
+        oldLine: oldLineNum,
+        newLine: "",
+        sign: "-"
+      });
+      oldLineNum++;
     } else if (line.startsWith("+")) {
-      newLines.push(line.slice(1));
+      parsedLines.push({
+        type: "added",
+        content: line.slice(1),
+        oldLine: "",
+        newLine: newLineNum,
+        sign: "+"
+      });
+      newLineNum++;
     } else {
-      oldLines.push(line);
-      newLines.push(line);
+      // Normal context line
+      // Strip leading space if it exists
+      const content = line.startsWith(" ") ? line.slice(1) : line;
+      parsedLines.push({
+        type: "context",
+        content: content,
+        oldLine: oldLineNum,
+        newLine: newLineNum,
+        sign: " "
+      });
+      oldLineNum++;
+      newLineNum++;
     }
   }
 
   return (
-    <div className="patch-viewer">
-      <div className="patch-viewer-header">
-        <span className="patch-viewer-filename">File: {affectedFile || "unknown"}</span>
+    <div className="flex flex-col gap-3 w-full bg-[#0a0a0c] rounded-2xl border border-white/5 overflow-hidden">
+      {/* Header separated cleanly with flex flex-row/col */}
+      <div className="flex items-center justify-between px-5 py-3 border-b border-white/5 bg-white/5">
+        <span className="text-xs font-bold text-slate-300 font-mono">File: {affectedFile || "unknown"}</span>
+        <span className="text-[10px] bg-primary-soft text-primary px-2 py-0.5 rounded border border-primary/20 font-bold uppercase tracking-wider">
+          Surgical unified Diff
+        </span>
       </div>
-      <div className="patch-viewer-content">
-        <ReactDiffViewer
-          oldValue={oldLines.join("\n")}
-          newValue={newLines.join("\n")}
-          splitView={false}
-          compareMethod={DiffMethod.LINES}
-          useDarkTheme={true}
-          hideLineNumbers={false}
-          styles={{
-            variables: {
-              dark: {
-                diffViewerBackground: "#0a0a0c",
-                addedBackground: "rgba(16, 185, 129, 0.08)",
-                removedBackground: "rgba(239, 68, 68, 0.08)",
-                wordAddedBackground: "rgba(16, 185, 129, 0.25)",
-                wordRemovedBackground: "rgba(239, 68, 68, 0.25)",
-                addedGutterBackground: "rgba(16, 185, 129, 0.12)",
-                removedGutterBackground: "rgba(239, 68, 68, 0.12)",
-                codeFoldBackground: "#111115",
-                emptyLineBackground: "#030303",
-                gutterColor: "#5c5c6d",
-                addedGutterColor: "#10b981",
-                removedGutterColor: "#ef4444"
-              },
-            },
-            lineNumber: {
-              minWidth: "45px",
-              paddingLeft: "12px",
-              paddingRight: "12px",
-              textAlign: "right",
-              boxSizing: "border-box",
-            },
-            gutter: {
-              minWidth: "45px",
-              paddingLeft: "12px",
-              paddingRight: "12px",
-              boxSizing: "border-box",
-            },
-            marker: {
-              minWidth: "30px",
-              paddingLeft: "8px",
-              paddingRight: "8px",
-              textAlign: "center",
-              boxSizing: "border-box",
-            },
-            codeFold: {
-              fontFamily: "var(--font-mono)",
-              padding: "10px 16px",
-              margin: "12px 0 6px 0",
-              position: "relative",
-              display: "flex",
-              alignItems: "center",
-              boxSizing: "border-box",
-              height: "auto",
-            },
-            codeFoldGutter: {
-              padding: "10px 0",
-              boxSizing: "border-box",
-            },
-            titleBlock: {
-              fontFamily: "var(--font-mono)",
-            }
-          }}
-        />
+
+      {/* Code diff block with a custom structured table */}
+      <div className="overflow-x-auto w-full">
+        <table className="w-full border-collapse font-mono text-xs text-left">
+          <tbody>
+            {parsedLines.map((line, idx) => {
+              if (line.type === "hunk") {
+                return (
+                  <tr key={idx} className="bg-primary/5 border-y border-white/5 text-primary/70 select-none">
+                    <td className="py-2.5 px-4 font-bold text-center" colSpan={4}>
+                      {line.content}
+                    </td>
+                  </tr>
+                );
+              }
+
+              let rowClass = "hover:bg-white/5";
+              let signClass = "text-slate-600";
+              let codeClass = "text-slate-300";
+
+              if (line.type === "added") {
+                rowClass = "bg-emerald-500/10 hover:bg-emerald-500/15";
+                signClass = "text-emerald-400 font-bold";
+                codeClass = "text-emerald-300";
+              } else if (line.type === "removed") {
+                rowClass = "bg-rose-500/10 hover:bg-rose-500/15";
+                signClass = "text-rose-400 font-bold";
+                codeClass = "text-rose-300";
+              }
+
+              return (
+                <tr key={idx} className={`${rowClass} transition-colors border-none`}>
+                  {/* Column 1: Old Line Number */}
+                  <td className="w-12 py-1 px-3 text-right text-slate-500 select-none border-r border-white/5 font-mono">
+                    {line.oldLine}
+                  </td>
+                  {/* Column 2: New Line Number */}
+                  <td className="w-12 py-1 px-3 text-right text-slate-500 select-none border-r border-white/5 font-mono">
+                    {line.newLine}
+                  </td>
+                  {/* Column 3: Diff Operator */}
+                  <td className={`w-8 py-1 px-2 text-center select-none font-bold ${signClass}`}>
+                    {line.sign}
+                  </td>
+                  {/* Column 4: Code Text */}
+                  <td className={`py-1 px-4 whitespace-pre break-all ${codeClass}`}>
+                    {line.content}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   );
