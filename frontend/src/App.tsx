@@ -745,7 +745,7 @@ ${report.learning_summary}
                   </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto divide-y divide-white/5">
+                <div className="flex-1 overflow-y-auto divide-y divide-white/5 flex flex-col">
                   {filteredPipelines.length ? (
                     filteredPipelines.map((p) => {
                       const isFailed = p.outcome === "deploy_failed" || p.latest_stage === "aborted";
@@ -788,7 +788,7 @@ ${report.learning_summary}
                       );
                     })
                   ) : (
-                    <div className="p-8 text-center text-slate-500 flex flex-col items-center justify-center gap-3">
+                    <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-500 gap-3">
                       <AlertOctagon size={24} className="text-slate-600" />
                       <span className="text-xs">No active incidents captured.</span>
                     </div>
