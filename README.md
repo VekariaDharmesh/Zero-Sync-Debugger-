@@ -55,23 +55,42 @@ Traditional AI coding assistants are stateless. Zero-Sync Debugger maintains lon
 
 Open `http://localhost:5173` to access the live dashboard.
 
-## Parcle Integration
+## Parcle SDK Integration
 
-Zero-Sync Debugger reads and writes memory to Parcle to continuously improve performance.
-Check implementation in [parcle_client.py](file:///Users/vekariadharmeshh/Desktop/Quackathon/backend/memory/parcle_client.py).
+Zero-Sync Debugger initializes the official Parcle SDK to manage long-term engineering memory state. Check the centralized implementation in [parcle_service.py](file:///Users/vekariadharmeshh/Desktop/Quackathon/backend/services/parcle_service.py).
 
-### Memory Query Example
+### Initializing Parcle Client
 ```python
-async def query_similar_bugs(error: ErrorRecord, top_k: int = 5) -> List[MemoryHit]:
-    query_text = f"{error.error_type}: {error.message}\n\nStack:\n{error.stack_trace}"
-    async with httpx.AsyncClient() as client:
-        response = await client.post(
-            f"https://api.parcle.ai/v1/memory/query",
-            headers={"Authorization": f"Bearer {PARCLE_API_KEY}"},
-            json={"query": query_text, "top_k": top_k, "namespace": "bug-fixes"}
-        )
-        return [MemoryHit(**h) for h in response.json().get("results", [])]
+from parcle import Parcle
+
+# Initialize the Parcle client using the API key
+client = Parcle(api_key=os.getenv("PARCLE_API_KEY"))
+
+# Create or reuse the zero_sync user on startup
+try:
+    client.create_user(user_id="zero_sync", name="Zero-Sync Debugger Operator")
+except Exception as e:
+    # Gracefully handles existing profiles (e.g. 409 Conflict)
+    pass
 ```
+
+### Ingesting Dialog (Incident Resolution)
+When a hotfix patch is successfully deployed, Zero-Sync records the incident state in Parcle memory using `ingest_dialog()`:
+```python
+messages = [
+    {"role": "user", "content": "TypeError: Cannot read property 'name' of undefined..."},
+    {"role": "assistant", "content": "Root Cause: Null lookup\nFix: Added guard...\nConfidence: 94\nDeployment: Success"}
+]
+res = client.ingest_dialog(user_id="zero_sync", messages=messages)
+```
+
+### Querying Memory
+Before Claude 3.5 Sonnet generates a fix, the pipeline queries past incident fixes using `search()`:
+```python
+# Returns similar memories, confidence scores, and documents citations
+res = client.search(user_id="zero_sync", query=error_query)
+```
+
 
 ## Enter Pro Integration
 
