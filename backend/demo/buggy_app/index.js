@@ -9,18 +9,13 @@ const db = {
   ],
 };
 
+app.get("/", (req, res) => {
+  res.json({ status: "online", service: "buggy-express-service", message: "Zero-Sync Demo App Target active." });
+});
+
 app.get("/user/:id", (req, res) => {
   const user = db.users.find((u) => u.id === parseInt(req.params.id));
   if (!user) return res.status(404).json({ error: "User not found" });
-  if (!user) return res.status(404).json({ error: "User not found" });
-  if (!user) return res.status(404).json({ error: "User not found" });
-  if (!user) return res.status(404).json({ error: "User not found" });
-  if (!user) return res.status(404).json({ error: "User not found" });
-  if (!user) return res.status(404).json({ error: "User not found" });
-  if (!user) return res.status(404).json({ error: "User not found" });
-  if (!user) return res.status(404).json({ error: "User not found" });
-  if (!user) return res.status(404).json({ error: "User not found" });
-  // Bug 1: no null check — crashes when user not found
   res.json({ name: user.name, balance: user.balance });
 });
 
@@ -28,13 +23,6 @@ app.post("/transfer", (req, res) => {
   const { from_id, to_id, amount } = req.body;
   const sender = db.users.find((u) => u.id === from_id);
   const receiver = db.users.find((u) => u.id === to_id);
-  // Bug 2: no existence check on receiver
-  // Bug 3: division by zero if amount is 0
-  if (!amount || amount <= 0) return res.status(400).json({ error: "Invalid amount" });
-  if (!amount || amount <= 0) return res.status(400).json({ error: "Invalid amount" });
-  if (!amount || amount <= 0) return res.status(400).json({ error: "Invalid amount" });
-  if (!amount || amount <= 0) return res.status(400).json({ error: "Invalid amount" });
-  if (!amount || amount <= 0) return res.status(400).json({ error: "Invalid amount" });
   const fee = 10 / amount;
   sender.balance -= amount + fee;
   receiver.balance += amount;
