@@ -50,8 +50,39 @@ export function PatchViewer({ patchDiff, affectedFile }) {
                 removedGutterColor: "#ef4444"
               },
             },
+            lineNumber: {
+              minWidth: "45px",
+              paddingLeft: "12px",
+              paddingRight: "12px",
+              textAlign: "right",
+              boxSizing: "border-box",
+            },
+            gutter: {
+              minWidth: "45px",
+              paddingLeft: "12px",
+              paddingRight: "12px",
+              boxSizing: "border-box",
+            },
+            marker: {
+              minWidth: "30px",
+              paddingLeft: "8px",
+              paddingRight: "8px",
+              textAlign: "center",
+              boxSizing: "border-box",
+            },
             codeFold: {
               fontFamily: "var(--font-mono)",
+              padding: "10px 16px",
+              margin: "12px 0 6px 0",
+              position: "relative",
+              display: "flex",
+              alignItems: "center",
+              boxSizing: "border-box",
+              height: "auto",
+            },
+            codeFoldGutter: {
+              padding: "10px 0",
+              boxSizing: "border-box",
             },
             titleBlock: {
               fontFamily: "var(--font-mono)",
