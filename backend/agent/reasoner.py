@@ -9,14 +9,16 @@ SYSTEM_PROMPT = """You are Zero-Sync, an autonomous debugging agent with access 
 Your job:
 1. Analyze the incoming error — type, message, stack trace, file context
 2. Review any similar past bugs retrieved from memory
-3. Identify the root cause
+3. Identify the root cause and explain it in plain language, explaining how memory influenced this fix
 4. Generate a precise, minimal patch that fixes the issue without introducing new problems
-5. Write a clear one-sentence summary of the fix
+5. Provide a confidence score (integer percentage 0-100) and risk assessment ("low", "medium", or "high")
+6. Write a clear one-sentence summary of the fix
 
 Output format — return only valid JSON, no markdown fences, no explanation outside the JSON:
 {
-  "root_cause": "concise explanation of why this error occurs",
-  "confidence": "high" | "medium" | "low",
+  "root_cause": "detailed paragraph explaining why this error occurs, citing mitigation patterns",
+  "confidence_score": 94,
+  "risk_level": "low" | "medium" | "high",
   "fix_summary": "one sentence describing what the patch does",
   "patch_diff": "unified diff format patch string",
   "affected_file": "path/to/file.ext",
@@ -24,22 +26,22 @@ Output format — return only valid JSON, no markdown fences, no explanation out
 }
 
 Rules:
-- Never output placeholder code. If you cannot produce a real patch, set patch_diff to null and confidence to low.
+- Never output placeholder code. If you cannot produce a real patch, set patch_diff to null.
 - Patches must be in unified diff format (--- a/file, +++ b/file, @@ ... @@).
 - Do not add comments in the patch that explain what you changed. The diff is self-documenting.
 - Be surgical. Change only what is broken."""
 
-# Mock responses for simulation
 MOCK_RESPONSES = {
     "TypeError": {
-        "root_cause": "The route handler attempts to access properties of a user object returned by database query without validating if the user exists.",
-        "confidence": "high",
+        "root_cause": "The current incident appears similar to two historical memory entries. The root cause is an unchecked user lookup returning null. A previous successful fix introduced a null guard before property access. The generated patch follows the same mitigation pattern.",
+        "confidence_score": 94,
+        "risk_level": "low",
         "fix_summary": "Added a null check guard returning 404 status when user is not found.",
         "affected_file": "index.js",
         "memory_used": True,
         "patch_diff": """--- a/index.js
 +++ b/index.js
-@@ -10,3 +10,4 @@
+@@ -12,3 +12,4 @@
  app.get("/user/:id", (req, res) => {
    const user = db.users.find((u) => u.id === parseInt(req.params.id));
 +  if (!user) return res.status(404).json({ error: "User not found" });
@@ -47,28 +49,30 @@ MOCK_RESPONSES = {
  });"""
     },
     "RangeError": {
-        "root_cause": "The transfer endpoint attempts to divide by an amount without ensuring it is non-zero, resulting in division by zero.",
-        "confidence": "high",
+        "root_cause": "The incident matches a past RangeError in services/pricing.js. The current code calculates a fee by dividing by transaction amount without safeguarding for division-by-zero. The patch inserts a conditional guard matching prior incident responses.",
+        "confidence_score": 92,
+        "risk_level": "low",
         "fix_summary": "Added a check to ensure transfer amount is greater than zero to prevent division by zero.",
         "affected_file": "index.js",
         "memory_used": True,
         "patch_diff": """--- a/index.js
 +++ b/index.js
-@@ -18,3 +18,4 @@
+@@ -20,3 +20,4 @@
    const receiver = db.users.find((u) => u.id === to_id);
 +  if (!amount || amount <= 0) return res.status(400).json({ error: "Invalid amount" });
    const fee = 10 / amount;
    sender.balance -= amount + fee;"""
     },
     "UndefinedReceiver": {
-        "root_cause": "The transfer endpoint does not verify if the sender or receiver user records actually exist before updating balances, leading to crashes.",
-        "confidence": "medium",
+        "root_cause": "The transfer algorithm executes state updates on sender/receiver database records before verifying if they exist. Based on past memories, this triggers undefined property access crashes. A manual approval review is recommended as the patch has moderate complexity.",
+        "confidence_score": 63,
+        "risk_level": "medium",
         "fix_summary": "Added check to ensure both sender and receiver exist before updating balances.",
         "affected_file": "index.js",
         "memory_used": True,
         "patch_diff": """--- a/index.js
 +++ b/index.js
-@@ -18,3 +18,5 @@
+@@ -21,3 +21,5 @@
    const receiver = db.users.find((u) => u.id === to_id);
 +  if (!sender) return res.status(404).json({ error: "Sender not found" });
 +  if (!receiver) return res.status(404).json({ error: "Receiver not found" });
@@ -78,7 +82,7 @@ MOCK_RESPONSES = {
 
 async def reason(error: ErrorRecord, memory_hits: List[MemoryHit]) -> dict:
     if not ANTHROPIC_API_KEY:
-        # Simulated reasoning fallback based on error content
+        # Fallback simulation mapping
         err_type = error.error_type
         if "division" in error.message.lower() or "zero" in error.message.lower() or "rangeerror" in err_type.lower():
             res = dict(MOCK_RESPONSES["RangeError"])
@@ -86,7 +90,7 @@ async def reason(error: ErrorRecord, memory_hits: List[MemoryHit]) -> dict:
             res = dict(MOCK_RESPONSES["UndefinedReceiver"])
         else:
             res = dict(MOCK_RESPONSES["TypeError"])
-        res["tokens_used"] = 450
+        res["tokens_used"] = 520
         return res
 
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
@@ -101,6 +105,7 @@ async def reason(error: ErrorRecord, memory_hits: List[MemoryHit]) -> dict:
                 f"Fix: {hit.fix_summary}\n"
                 f"Patch:\n{hit.patch_diff}\n"
                 f"Outcome: {hit.outcome}\n"
+                f"Previous Root Cause: {hit.previous_root_cause}\n"
             )
 
     user_message = (
@@ -109,6 +114,8 @@ async def reason(error: ErrorRecord, memory_hits: List[MemoryHit]) -> dict:
         f"Message: {error.message}\n"
         f"File: {error.file_path}:{error.line_number}\n"
         f"Language: {error.language}\n"
+        f"Severity: {error.severity}\n"
+        f"Service Name: {error.service_name}\n"
         f"Stack trace:\n{error.stack_trace}"
         f"{memory_context}"
     )
@@ -122,7 +129,6 @@ async def reason(error: ErrorRecord, memory_hits: List[MemoryHit]) -> dict:
         )
         raw = response.content[0].text.strip()
         
-        # Clean any accidental markdown fence if LLM returns it
         if raw.startswith("```"):
             lines = raw.split("\n")
             if lines[0].startswith("```"):
@@ -135,7 +141,6 @@ async def reason(error: ErrorRecord, memory_hits: List[MemoryHit]) -> dict:
         result["tokens_used"] = response.usage.input_tokens + response.usage.output_tokens
         return result
     except Exception as e:
-        # If API call fails, fall back to mock response to preserve demo functionality
         err_type = error.error_type
         if "division" in error.message.lower() or "zero" in error.message.lower() or "rangeerror" in err_type.lower():
             res = dict(MOCK_RESPONSES["RangeError"])

@@ -18,6 +18,8 @@ def normalize_sentry(payload: Dict[str, Any]) -> ErrorRecord:
         file_path=top_frame.get("filename"),
         line_number=top_frame.get("lineno"),
         language="javascript",
+        severity="error",
+        service_name="production-express-app"
     )
 
 def normalize_custom(payload: Dict[str, Any]) -> ErrorRecord:
@@ -28,4 +30,6 @@ def normalize_custom(payload: Dict[str, Any]) -> ErrorRecord:
         file_path=payload.get("file_path"),
         line_number=payload.get("line_number"),
         language=payload.get("language", "unknown"),
+        severity=payload.get("severity", "error"),
+        service_name=payload.get("service_name", "demo-express-service")
     )

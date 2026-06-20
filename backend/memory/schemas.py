@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 class ErrorRecord(BaseModel):
@@ -9,6 +9,8 @@ class ErrorRecord(BaseModel):
     file_path: Optional[str] = None
     line_number: Optional[int] = None
     language: Optional[str] = None
+    severity: Optional[str] = "error"
+    service_name: Optional[str] = "demo-express-service"
     received_at: datetime = Field(default_factory=datetime.utcnow)
 
 class MemoryHit(BaseModel):
@@ -20,6 +22,9 @@ class MemoryHit(BaseModel):
     patch_diff: str
     outcome: str
     fixed_at: str
+    previous_root_cause: Optional[str] = ""
+    previous_fix_summary: Optional[str] = ""
+    previous_deployment_result: Optional[str] = ""
 
 class FixRecord(BaseModel):
     error_record: ErrorRecord
@@ -28,5 +33,6 @@ class FixRecord(BaseModel):
     outcome: str
     tokens_used: int
     duration_seconds: float
-    confidence: Optional[str] = "high"
-    root_cause: Optional[str] = ""
+    confidence_score: int = 90
+    risk_level: str = "low"
+    root_cause: str = ""

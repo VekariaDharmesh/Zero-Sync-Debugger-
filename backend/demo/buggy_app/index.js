@@ -14,6 +14,7 @@ app.get("/user/:id", (req, res) => {
   if (!user) return res.status(404).json({ error: "User not found" });
   if (!user) return res.status(404).json({ error: "User not found" });
   if (!user) return res.status(404).json({ error: "User not found" });
+  if (!user) return res.status(404).json({ error: "User not found" });
   // Bug 1: no null check — crashes when user not found
   res.json({ name: user.name, balance: user.balance });
 });
