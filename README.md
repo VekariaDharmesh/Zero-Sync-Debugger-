@@ -1,202 +1,332 @@
-# Zero-Sync Debugger
+<div align="center">
+
+# 🛡️ Zero-Sync Debugger
+
 ### Memory-Driven Autonomous Incident Recovery Command Center
-### National Security & Predictive Infrastructure Platform
-### AI-Driven (Claude 3.5 Sonnet + Parcle Vector Memory + Enter Pro) — Zero Manual Inspection Dependency
 
-📌 **What is Zero-Sync Debugger?**
-Zero-Sync Debugger is an autonomous, mission-critical operations command center that intercepts production runtime errors, references historical incident memory via Parcle, reasons on code repairs using Claude 3.5 Sonnet, and deploys surgical hotfixes through Enter Pro without manual debugging.
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.111+-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
+[![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-It learns the "normal" operational state and logs resolution patterns of a healthy application network, flagging anomalies such as:
+<br/>
 
-- **Structural Exceptions**: Undefined variable lookups, null references, and range boundary errors.
-- **Context Recalls**: Semantic matches of historical fixes stored in Parcle vector memory.
-- **Vulnerability Risks**: Automated patch evaluation to prevent regression errors.
+**AI-Powered** (Claude 3.5 Sonnet) · **Vector Memory** (Parcle) · **Auto-Deploy** (Enter Pro)
 
----
+*Intercept. Remember. Reason. Patch. Deploy. — All without human intervention.*
 
-## ✨ Main Features
-- **Zero-Day Incident Recovery**: Automated identification, diagnosis, and fix generation of unknown application bugs.
-- **Parcle Vector Memory**: Long-term state storage and semantic query search of preceding incidents.
-- **Memory Influence Analyzer**: Real-time analytics displaying confidence improvements before and after memory retrieval.
-- **Reasoning Pipeline Flow**: Interactive status monitoring tracking incident triage from capture to deploy.
-- **Enter Pro Hotfix Deployments**: Autonomous surgical unified diff patching and rolling container builds.
-- **One-Click Safe Rollback**: Instantly revert active patches to restore original service code stability.
-- **Cyber-NOC Operations Dashboard**: A high-end dark luxury telemetry interface built for mission control operators.
+<br/>
+
+</div>
 
 ---
 
-## 🚀 Quick Start (Installation)
+## 📌 What is Zero-Sync Debugger?
 
-### 1. Clone Repository
+**Zero-Sync Debugger** is an autonomous, mission-critical operations command center that:
+
+1. 🔍 **Intercepts** production runtime errors in real-time
+2. 🧠 **Recalls** historical incident patterns via Parcle vector memory
+3. 🤖 **Reasons** on code repairs using Claude 3.5 Sonnet AI
+4. 🚀 **Deploys** surgical hotfixes through Enter Pro — zero manual debugging
+
+It continuously learns from every incident, building an ever-growing knowledge base that makes future recoveries faster and more accurate.
+
+### What does it detect?
+
+| Anomaly Type | Description |
+|:---|:---|
+| 🧱 **Structural Exceptions** | Undefined variable lookups, null references, and range boundary errors |
+| 🔗 **Context Recalls** | Semantic matches of historical fixes stored in Parcle vector memory |
+| 🛡️ **Vulnerability Risks** | Automated patch evaluation to prevent regression errors |
+
+---
+
+## ✨ Key Features
+
+| Feature | Description |
+|:---|:---|
+| ⚡ **Zero-Day Incident Recovery** | Automated identification, diagnosis, and fix generation of unknown bugs |
+| 🧠 **Parcle Vector Memory** | Long-term semantic storage & query search of past incidents |
+| 📊 **Memory Influence Analyzer** | Real-time confidence improvement analytics (before vs. after memory retrieval) |
+| 🔄 **Reasoning Pipeline Flow** | Interactive status monitoring: Capture → Diagnose → Patch → Deploy |
+| 🚀 **Enter Pro Hotfix Deployments** | Autonomous unified diff patching & rolling container builds |
+| ⏪ **One-Click Safe Rollback** | Instantly revert active patches to restore service stability |
+| 🖥️ **Cyber-NOC Dashboard** | High-end dark luxury telemetry interface for mission control operators |
+| 🎨 **Dynamic Theme Engine** | Switch between Nebula, Matrix, Cyberpunk, and Crimson presets |
+| 💻 **Built-in CLI Console** | Run NOC operations directly from the in-dashboard terminal |
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+graph LR
+    A["🐛 Buggy App<br/>(Express :3001)"] -->|Error Event| B["📡 Ingest Webhook<br/>(Sentry / Custom)"]
+    B --> C["🧠 Parcle Memory<br/>(Vector Search)"]
+    B --> D["🤖 Claude 3.5 Sonnet<br/>(AI Reasoner)"]
+    C -->|Historical Context| D
+    D -->|Unified Diff Patch| E["✅ Patch Validator<br/>(Dry-Run)"]
+    E --> F["🚀 Enter Pro<br/>(Auto-Deploy)"]
+    F -->|Recovery Complete| G["📊 Cyber-NOC Dashboard<br/>(Vite + React :5173)"]
+    D -->|Memory Write-Back| C
+
+    style A fill:#ef4444,stroke:#fca5a5,color:#fff
+    style B fill:#3b82f6,stroke:#93c5fd,color:#fff
+    style C fill:#a855f7,stroke:#c084fc,color:#fff
+    style D fill:#ec4899,stroke:#f9a8d4,color:#fff
+    style E fill:#f59e0b,stroke:#fcd34d,color:#fff
+    style F fill:#10b981,stroke:#6ee7b7,color:#fff
+    style G fill:#6366f1,stroke:#a5b4fc,color:#fff
+```
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology | Purpose |
+|:---|:---|:---|
+| **AI Engine** | Claude 3.5 Sonnet (Anthropic) | Code reasoning, patch generation |
+| **Memory Layer** | Parcle Vector DB | Semantic incident storage & recall |
+| **Deployment** | Enter Pro API | Production hotfix orchestration |
+| **Backend** | FastAPI + Uvicorn (Python) | API server, SSE streaming, webhooks |
+| **Frontend** | React 19 + Vite 8 | Cyber-NOC operations dashboard |
+| **Styling** | Tailwind CSS + Framer Motion | Dark luxury UI with micro-animations |
+| **Charts** | Recharts | Analytics visualization & telemetry |
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Python** 3.10+
+- **Node.js** 18+
+- API Keys (optional — falls back to simulation mode without them):
+  - `ANTHROPIC_API_KEY` — Claude 3.5 reasoning
+  - `PARCLE_API_KEY` — Vector memory layer
+  - `ENTER_PRO_API_KEY` — Deployment orchestrator
+
+### 1️⃣ Clone & Configure
+
 ```bash
 git clone https://github.com/VekariaDharmesh/Zero-Sync-Debugger-.git
 cd Zero-Sync-Debugger-
 ```
 
-### 2. Configure Environment Variables
-Create a `.env` configuration file in the `backend` folder:
 ```bash
+# Set up environment variables
 cd backend
 cp .env.example .env
-# Populate ANTHROPIC_API_KEY, PARCLE_API_KEY, and ENTER_PRO credentials
+# Edit .env with your API keys (optional)
 ```
 
-### 3. Initialize Virtual Environment
-#### Linux / macOS
+### 2️⃣ Backend Setup
+
+<details>
+<summary>🐧 Linux / macOS</summary>
+
 ```bash
+cd backend
 python3 -m venv venv
 source venv/bin/activate
-```
-#### Windows
-```bash
-python -m venv venv
-.\venv\Scripts\activate
-```
-
-### 4. Install Dependencies
-```bash
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
+</details>
 
-### 5. Start Application Nodes
+<details>
+<summary>🪟 Windows</summary>
 
-#### Node A – Launch Buggy Demo App (Express App target)
 ```bash
-cd demo/buggy_app
-npm install
-node index.js
+cd backend
+python -m venv venv
+.\venv\Scripts\activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+</details>
+
+### 3️⃣ Start All Services
+
+You need **3 terminals** running simultaneously:
+
+| Terminal | Command | Service |
+|:---|:---|:---|
+| **Terminal 1** | `cd backend/demo/buggy_app && npm install && node index.js` | 🐛 Buggy Demo App → `:3001` |
+| **Terminal 2** | `cd backend && uvicorn main:app --reload --port 8000` | ⚡ FastAPI Backend → `:8000` |
+| **Terminal 3** | `cd frontend && npm install && npm run dev` | 🖥️ Vite Dashboard → `:5173` |
+
+### 4️⃣ Open the Dashboard
+
+```
+🌐 http://localhost:5173
 ```
 
-#### Node B – Start FastAPI Backend Server
-```bash
-cd ../..
-venv/bin/uvicorn main:app --reload --port 8000
-```
-
-#### Node C – Start React Frontend Client Dashboard
-```bash
-cd ../frontend
-npm install
-npm run dev
-```
-
-Open `http://localhost:5173` to access the Cyber-NOC mission control room.
+> 💡 **No API keys?** No problem — the platform automatically falls back to local simulation mode so the full dashboard UI remains functional.
 
 ---
 
 ## 📂 Project Structure
-```markdown
+
+```
 Zero-Sync-Debugger-/
 │
 ├── backend/
-│   ├── main.py                 # FastAPI Application Server Entrypoint
-│   ├── config.py               # Credentials & environment configurations
-│   ├── requirements.txt        # Python backend dependencies
+│   ├── main.py                  # FastAPI server entrypoint
+│   ├── config.py                # Environment configuration loader
+│   ├── requirements.txt         # Python dependencies
 │   │
 │   ├── agent/
-│   │   ├── pipeline.py         # Autonomous workflow orchestrator & SSE broadcaster
-│   │   ├── reasoner.py         # Claude-3.5-Sonnet patch reasoning service
-│   │   ├── patcher.py          # Unified diff parser & dry-run validator
-│   │   └── deployer.py         # Enter Pro API integration & target server patch applier
+│   │   ├── pipeline.py          # Autonomous workflow orchestrator & SSE broadcaster
+│   │   ├── reasoner.py          # Claude 3.5 Sonnet patch reasoning service
+│   │   ├── patcher.py           # Unified diff parser & dry-run validator
+│   │   └── deployer.py          # Enter Pro API integration & patch applier
 │   │
 │   ├── services/
-│   │   └── parcle_service.py   # Parcle client user provisioning, dialog ingest, & search
+│   │   └── parcle_service.py    # Parcle user provisioning, dialog ingest & search
 │   │
 │   ├── memory/
-│   │   ├── parcle_client.py    # Memory endpoint routes (rollbacks, history ledger)
-│   │   └── schemas.py          # Pydantic schemas (ErrorRecords, FixRecords)
+│   │   ├── parcle_client.py     # Memory routes (rollbacks, history ledger)
+│   │   └── schemas.py           # Pydantic schemas (ErrorRecords, FixRecords)
 │   │
 │   ├── ingest/
-│   │   ├── custom_logger.py    # Custom agent exception receiver webhook
-│   │   └── sentry_webhook.py   # Sentry incident ingestion route
+│   │   ├── custom_logger.py     # Custom exception receiver webhook
+│   │   └── sentry_webhook.py    # Sentry incident ingestion route
 │   │
 │   ├── streams/
-│   │   └── sse.py              # Server-Sent Events subscription hub
+│   │   └── sse.py               # Server-Sent Events subscription hub
 │   │
 │   └── demo/
-│       └── buggy_app/          # Target node server simulating real-time outages
+│       └── buggy_app/           # Express server simulating production outages
 │
 └── frontend/
     ├── src/
-    │   ├── App.tsx             # Cyber-NOC React Dashboard UI Component
+    │   ├── App.tsx              # Main Cyber-NOC dashboard component
     │   ├── hooks/
     │   │   ├── useAgentState.js # SSE event state pipeline parser
     │   │   └── useEventStream.js# EventSource connection lifecycle hook
-    │   └── components/         # Premium modular UI widgets (PatchViewer, ErrorFeed)
+    │   └── components/          # Modular UI widgets (PatchViewer, ErrorFeed, etc.)
     │
-    ├── package.json            # Vite frontend node dependencies
-    └── vite.config.ts          # Vite build config
+    ├── package.json             # Vite + React dependencies
+    └── vite.config.js           # Vite build configuration
 ```
 
 ---
 
-## 🛠️ Full Setup Guide
-### Requirements
-- **Runtime Environment**: Python 3.10+, Node.js 18+
-- **API Access**: 
-  - Anthropic API Key (Claude-3.5 reasoning context)
-  - Parcle API Key (Long-term vector memory layer)
-  - Enter Pro Credentials (Production deployment orchestrator)
-
----
-
-## 🔧 Typical Usage
+## 🔧 Usage Guide
 
 ### 1. Simulating Outages
-- In the dashboard top bar, click **"Simulate Outage"** or trigger individual error endpoints manually.
-- The target server will throw an exception, immediately feeding it into the Sentry ingestion webhook.
 
-### 2. Monitoring Reasoning Pipelines
-- Follow the active reasoning nodes: **Captured → Query Memory → Match Score → Diagnosed → Patch Output → Validated → Deploying → Recovered**.
-- Observe the **Memory Influence Analyzer** calculating confidence rating improvements.
+Click **"Simulate Outage"** in the dashboard top bar or trigger individual errors:
 
-### 3. Reviewing Memory Diffs
-- Head over to the **Memory Lifecycle** or **Engineering Journal** tabs.
-- Analyze the vector write logs, similarity metrics, and historical document citations.
+| Button | Error Type | What Happens |
+|:---|:---|:---|
+| `Null Ref` | TypeError | Triggers undefined property access |
+| `Div/0` | RangeError | Triggers division by zero |
+| `Route Match` | ReferenceError | Triggers missing route handler |
+
+You can also use the **built-in CLI console**:
+```
+> outage null-ref
+> outage div-zero
+> outage missing-route
+```
+
+### 2. Monitoring the Pipeline
+
+Watch the real-time reasoning flow through 8 stages:
+
+```
+Captured → Query Memory → Match Score → Diagnosed → Patch Output → Validated → Deploying → Recovered
+```
+
+The **Memory Influence Analyzer** shows confidence improvements in real-time.
+
+### 3. Reviewing Incident History
+
+- **Memory Timeline** — Chronological view of all Parcle vector writes
+- **Engineering Journal** — Detailed postmortem reports with export (JSON/Markdown)
+- **Memory Lifecycle** — Full vector document inspection with similarity metrics
+- **AI Insights** — Radar charts, confidence analytics, and autonomy scoring
 
 ---
 
-## ⚠️ Notes & Limitations
-- **API Fallback Mode**: If valid credentials are not supplied, the platform falls back to a local simulation cache so core interface functionality is unaffected.
-- **Rollback Window**: rollbacks restore the target directory index files to their clean, unpatched backups stored prior to deployment.
+## 🔌 API Endpoints
+
+| Method | Endpoint | Description |
+|:---|:---|:---|
+| `GET` | `/health` | Platform health check |
+| `POST` | `/ingest/demo/trigger/{type}` | Trigger simulated error |
+| `POST` | `/ingest/confirm/{pipeline_id}` | Approve pending patch deployment |
+| `GET` | `/stream/events` | SSE event stream (real-time) |
+| `GET` | `/memory/recent` | Fetch recent memory entries |
+| `GET` | `/memory/analytics` | Memory analytics & metrics |
+| `POST` | `/memory/rollback` | Rollback an active patch |
 
 ---
 
-## 🛠️ Troubleshooting
+## 🐛 Troubleshooting
+
 | Problem | Solution |
-| :--- | :--- |
-| **Parcle SDK connection errors** | Ensure `PARCLE_API_KEY` is loaded in `.env` and contains correct permissions. |
-| **Port Conflicts** | Make sure ports `8000` (FastAPI), `3001` (Express App), and `5173` (Vite Dashboard) are not occupied. |
-| **SSE Logs Disconnected** | Verify the backend server is running and accessible at `http://localhost:8000`. |
-| **Empty Memory Stream** | Run the simulation sequence to populate Parcle ledger namespaces. |
+|:---|:---|
+| **Parcle SDK connection errors** | Verify `PARCLE_API_KEY` in `.env` has correct permissions |
+| **Port conflicts** | Ensure ports `3001`, `8000`, and `5173` are free |
+| **SSE logs disconnected** | Check backend is running at `http://localhost:8000` |
+| **Empty memory stream** | Run a simulation sequence to populate Parcle namespaces |
+| **Dashboard blank/errors** | Run `npm install` in `frontend/` and restart dev server |
 
 ---
 
-## 🔮 Future Improvements
-- Multi-service telemetry tracking of distributed microservices.
-- Automatic recovery validation using isolated production-preview testing containers.
-- ChatOps integrations for Slack and Discord status reporting alerts.
+## 🔮 Roadmap
+
+- [ ] Multi-service distributed microservice telemetry tracking
+- [ ] Isolated production-preview containers for recovery validation
+- [ ] Slack & Discord ChatOps integration for alert notifications
+- [ ] Multi-language support (Go, Rust, Java error parsers)
+- [ ] Team-based access control with role-based permissions
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Areas of interest:
+
+- 🧩 Improved exception parsers for additional languages
+- 📐 Enhanced vector clustering and similarity algorithms
+- 🎨 Custom NOC dashboard widgets and theme presets
+- 📝 Documentation improvements and tutorials
+
+```bash
+# Fork → Clone → Branch → Code → PR
+git checkout -b feature/your-feature-name
+```
 
 ---
 
 ## 📄 License
-MIT License — Free to use, modify, and distribute for operations research and infrastructure safety.
+
+This project is licensed under the **MIT License** — free to use, modify, and distribute.
 
 ---
 
-## ❤️ Contributing
-Pull requests are welcome for:
-- Improved computer science exception parsers.
-- Enhanced vector clustering algorithms.
-- Custom NOC dashboard widgets.
+<div align="center">
 
----
+## 👨‍💻 Author
 
-## 👨💻 Author
 **Dharmesh Vekaria & Team Meridian**
-Gandhinagar, Gujarat · 2026
+
+📍 Gandhinagar, Gujarat · 2026
 
 *Focused on national infrastructure safety & modern AI-driven threat detection.*
 
+<br/>
+
 🛡️ **Zero-Sync · Recover Faster.**
+
+---
+
+*Built with ❤️ for Hack Aarambh*
+
+</div>

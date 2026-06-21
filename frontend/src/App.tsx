@@ -128,11 +128,14 @@ function TelemetryGauges({ activeStage }: { activeStage: string | undefined }) {
 
       <div className="grid grid-cols-3 gap-4 py-2">
         {[
-          { label: "CPU LOAD", val: cpu, color: isBusy ? "text-amber-400" : "text-emerald-400", barColor: isBusy ? "bg-amber-500" : "bg-emerald-500" },
-          { label: "MEMORY", val: memory, color: "text-primary", barColor: "bg-primary" },
-          { label: "NETWORK", val: network, color: "text-cyan-400", barColor: "bg-cyan-500" }
+          { label: "CPU LOAD", val: cpu, color: isBusy ? "text-amber-400" : "text-emerald-400", barColor: isBusy ? "bg-amber-500" : "bg-emerald-500", iconBg: isBusy ? "bg-amber-500/10 border-amber-500/20" : "bg-emerald-500/10 border-emerald-500/20", Icon: Cpu },
+          { label: "MEMORY", val: memory, color: "text-primary", barColor: "bg-primary", iconBg: "bg-primary/10 border-primary/20", Icon: Database },
+          { label: "NETWORK", val: network, color: "text-cyan-400", barColor: "bg-cyan-500", iconBg: "bg-cyan-500/10 border-cyan-500/20", Icon: Globe }
         ].map((item, idx) => (
           <div key={idx} className="flex flex-col items-center justify-center p-3 bg-bg-dark rounded-2xl border border-white/5">
+            <div className={`p-1.5 rounded-lg border ${item.iconBg} mb-1.5`}>
+              <item.Icon size={14} className={item.color} />
+            </div>
             <span className="text-[9px] font-bold text-slate-500">{item.label}</span>
             <span className={`text-xl font-extrabold tracking-tight my-1.5 ${item.color}`}>
               {item.val}%
