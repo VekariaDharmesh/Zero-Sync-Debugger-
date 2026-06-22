@@ -10,6 +10,8 @@
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vite.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
+**[🎥 Watch the Demo Video](https://www.youtube.com/watch?v=BsokUC6bHYo)**
+
 </div>
 
 ---
